@@ -28,7 +28,7 @@ describe('test PointReader', () => {
 
   [
     { text: 'P\n1\n1.0 2.0 3.0\n|~\n...', throws: /Unexpected end of file/ },
-    { text: 'P\n1\n1.0 2.0 3.0\n##~~\n...', throws: /Expected section end '|~'/ },
+    { text: 'P\n1\n1.0 2.0 3.0\n##~~\n...', throws: /Expected section end "|~"/ },
   ].forEach((test) => {
 
     it(`should throw on readPoints from ${JSON.stringify(test.text)}`, () => {
