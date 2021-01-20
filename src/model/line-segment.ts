@@ -1,7 +1,7 @@
-import { Element } from "./element";
+import { Element } from './element';
 
 export interface LineSegment extends Element {
-    startPointIndex: number;
-    endPointIndex: number;
-    isChamfer: boolean;
+  startPointIndex: number;
+  endPointIndex: number;
+  isChamfer: boolean;
 }

@@ -30,7 +30,7 @@ export enum AttributeType {
 }
 
 export interface Attribute {
-    number: number;
-    type: AttributeType;
-    data: string[];
+  number: number;
+  type: AttributeType;
+  data: string[];
 }

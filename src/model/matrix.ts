@@ -1,3 +1,3 @@
 export interface Matrix {
-    values: number[][];
+  values: number[][];
 }

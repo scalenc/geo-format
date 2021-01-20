@@ -10,5 +10,11 @@
     "exclude": [
       "tests/*.mock.ts"
     ]
+  },
+  "rules": {
+    "max-line-length": [
+      true,
+      120
+    ]
   }
 }

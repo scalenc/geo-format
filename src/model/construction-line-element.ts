@@ -1,8 +1,8 @@
-import { Element } from "./element";
+import { Element } from './element';
 
 export interface ConstructionLineElement extends Element {
-    pointIndex: number;
-    xSlope: number;
-    ySlope: number;
-    offset: number;
+  pointIndex: number;
+  xSlope: number;
+  ySlope: number;
+  offset: number;
 }

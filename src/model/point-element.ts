@@ -1,5 +1,5 @@
-import { Element } from "./element";
+import { Element } from './element';
 
 export interface PointElement extends Element {
-    pointIndex: number;
+  pointIndex: number;
 }

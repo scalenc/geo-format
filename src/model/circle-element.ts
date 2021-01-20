@@ -1,6 +1,6 @@
-import { Element } from "./element";
+import { Element } from './element';
 
 export interface CircleElement extends Element {
-    centerPointIndex: number;
-    radius: number;
+  centerPointIndex: number;
+  radius: number;
 }
