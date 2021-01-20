@@ -2,14 +2,21 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
+    "declaration": true,
+    "strict": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "lib",
+    "outDir": "dist",
     "sourceMap": true,
     "target": "esnext"
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

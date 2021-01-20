@@ -18,3 +18,4 @@ out-logger.json
 .DS_Store
 
 dump/
+dist/

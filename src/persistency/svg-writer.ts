@@ -80,7 +80,7 @@ export class SvgWriter {
 
   private writeElement(part: IPart, element: Element) {
     const writer = this.elementWriters[element.type];
-    return writer(part, element);
+    return writer(part, element as any);
   }
 
   private writeBendings(part: IPart, elements: Bending[]) {
@@ -166,7 +166,8 @@ export class SvgWriter {
     return `<use href="#${part.name}" transform="${this.writeTransform(copy.transformation)}" />`;
   }
 
-  private writeTransform(m: Matrix) {
+  private writeTransform(matrix: Matrix) {
+    const m = matrix.values;
     return `matrix(${m[0][0]}, ${m[1][0]}, ${m[0][1]}, ${m[1][1]}, ${m[3][0]}, ${m[3][1]})`; // FIXME correct?
   }
 

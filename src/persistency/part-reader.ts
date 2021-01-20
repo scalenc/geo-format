@@ -175,7 +175,7 @@ export class PartReader {
   }
 
   private readPartOrPartCopyNamedAttributes(endToken: string): { [name: string]: string } {
-    const attributes = {};
+    const attributes: { [name: string]: string } = {};
     for (; ;) {
       const line = this.parser.readTextLine();
       if (line === endToken) {

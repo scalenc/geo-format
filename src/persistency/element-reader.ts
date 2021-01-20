@@ -41,7 +41,7 @@ export class ElementReader {
   public read(): Element {
     const elementCommons = this.readCommons();
     const reader = this.elementReaders[elementCommons.type];
-    this.parser.assert(reader, `Unknown element type '${elementCommons.type}'`);
+    this.parser.assert(!!reader, `Unknown element type '${elementCommons.type}'`);
 
     const element = reader(elementCommons) as Element;
     element.attributes = this.readAttributes();

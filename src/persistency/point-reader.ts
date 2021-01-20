@@ -4,7 +4,7 @@ import * as constants from './constants';
 
 export class PointReader {
   public static readPoints(parser: Parser): { [index: number]: Vector } {
-    const points = {};
+    const points: { [number: number]: Vector } = {};
     while (!parser.isSectionChar) {
       parser.readExpectedTokenLine(constants.PART_POINT_START, 'point');
       const number = parser.readIntLine();
