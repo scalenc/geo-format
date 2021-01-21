@@ -1,0 +1,5 @@
+{
+  "hooks": {
+    "pre-commit": "echo 'Performing pre-commit hook: prettier' && pretty-quick --staged && echo 'Performing pre-commit hook: lint-staged' && lint-staged"
+  }
+}

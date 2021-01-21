@@ -5,10 +5,11 @@ import { ParserError } from './parser-error';
 
 export class Parser {
   private index = 0;
+
   private line = 1;
 
-  constructor(private text: string) {
-  }
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private text: string) {}
 
   get current(): string {
     return this.index < this.text.length ? this.text[this.index] : '';
@@ -22,7 +23,7 @@ export class Parser {
     return this.current === constants.ELEMENT_END_CHAR;
   }
 
-  public readNewLine() {
+  public readNewLine(): void {
     if (this.isCurrentLineEnd()) {
       this.readNextByte();
     } else {
@@ -48,7 +49,7 @@ export class Parser {
   public readDouble(): number {
     const s = this.readToken();
     const n = +s;
-    this.assert(!isNaN(n), `Expected number, but found "${s}"`);
+    this.assert(!Number.isNaN(n), `Expected number, but found "${s}"`);
     return n;
   }
 
@@ -62,7 +63,7 @@ export class Parser {
   public readInt(): number {
     const s = this.readToken();
     const n = +s;
-    this.assert(!isNaN(n), `Expected number, but found "${s}"`);
+    this.assert(!Number.isNaN(n), `Expected number, but found "${s}"`);
     return n;
   }
 
@@ -117,11 +118,11 @@ export class Parser {
     return v;
   }
 
-  public readExpectedSectionEndLine(expected: string) {
+  public readExpectedSectionEndLine(expected: string): void {
     this.readExpectedTokenLine(expected, 'section end');
   }
 
-  public readExpectedTokenLine(expected: string, tokenType: string) {
+  public readExpectedTokenLine(expected: string, tokenType: string): void {
     const actual = this.readToken();
     this.assert(expected === actual, `Expected ${tokenType} "${expected}", but found "${actual}"`);
     this.readNewLine();
@@ -134,22 +135,22 @@ export class Parser {
     return section;
   }
 
-  public readExpectedSectionStartLine(expectedSection: string) {
+  public readExpectedSectionStartLine(expectedSection: string): void {
     const section = this.readSectionStartLine();
     this.assert(expectedSection === section, `Expect section "${expectedSection}", but found "${section}"`);
   }
 
-  public skipWhiteSpace() {
+  public skipWhiteSpace(): void {
     while (!this.isCurrentLineEnd() && this.isWhiteSpace()) {
       this.readNextByte();
     }
   }
 
-  public assertSectionEnd(expected: string, actual: string) {
+  public assertSectionEnd(expected: string, actual: string): void {
     this.assert(expected === actual, `Expected section end "${expected}", but found "${actual}"`);
   }
 
-  public assert(condition: boolean, message: string) {
+  public assert(condition: boolean, message: string): void {
     if (!condition) {
       throw new ParserError(`ERROR in line ${this.line}: ${message}`, this.line);
     }

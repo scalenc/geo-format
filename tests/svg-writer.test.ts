@@ -21,7 +21,6 @@ describe('test SvgWriter', () => {
   ];
 
   sampleFiles.forEach((filename) => {
-
     it(`should write expected svg for ${filename}`, () => {
       const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
       const file = GeoReader.read(content);
@@ -35,6 +34,5 @@ describe('test SvgWriter', () => {
       const expectedSvg = fs.readFileSync(svgFilename).toString('utf-8');
       expect(expectedSvg).to.eq(svg);
     });
-
   });
 });

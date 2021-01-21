@@ -9,13 +9,13 @@ import { Attribute } from '../model/attribute';
 import { SubpartReader } from './subpart-reader';
 
 export class PartReader {
-  public constructor(private parser: Parser) {
-  }
+  // eslint-disable-next-line no-useless-constructor
+  public constructor(private parser: Parser) {}
 
   public read(): Part {
     const part = this.readDetails();
 
-    for (; ;) {
+    for (;;) {
       const section = this.parser.readSectionStartLine();
       switch (section) {
         case constants.PART_POINTS_SECTION:
@@ -102,6 +102,7 @@ export class PartReader {
   }
 
   private readPoints(part: Part) {
+    // eslint-disable-next-line no-param-reassign
     part.points = PointReader.readPoints(this.parser);
   }
 
@@ -112,6 +113,7 @@ export class PartReader {
 
   private readElements(part: Part) {
     const elementReader = new ElementReader(this.parser);
+    // eslint-disable-next-line no-param-reassign
     part.elements = elementReader.readList();
   }
 
@@ -139,6 +141,7 @@ export class PartReader {
   }
 
   private readPartAttributes(part: Part) {
+    // eslint-disable-next-line no-param-reassign
     part.attributes = this.readPartOrPartCopyNamedAttributes(constants.PART_ATTRIBUTE_SECTION_END);
   }
 
@@ -146,6 +149,7 @@ export class PartReader {
     while (!this.parser.isSectionChar) {
       this.parser.readExpectedTokenLine(constants.PART_ELEMENT_ATTRIBUTE_START, 'attribute');
       const attribute = this.readElementOrBendAttribute();
+      // eslint-disable-next-line no-param-reassign
       part.elementAttributes[attribute.number] = attribute;
     }
     this.parser.readExpectedSectionEndLine(constants.PART_ELEMENT_ATTRIBUTE_SECTION_END);
@@ -155,6 +159,7 @@ export class PartReader {
     while (!this.parser.isSectionChar) {
       this.parser.readExpectedTokenLine(constants.PART_BEND_ATTRIBUTE_START, 'attribute');
       const attribute = this.readElementOrBendAttribute();
+      // eslint-disable-next-line no-param-reassign
       part.bendingAttributes[attribute.number] = attribute;
     }
     this.parser.readExpectedSectionEndLine(constants.PART_BEND_ATTRIBUTE_SECTION_END);
@@ -164,7 +169,7 @@ export class PartReader {
     const number = this.parser.readIntLine();
     const type = this.parser.readIntLine();
     const data = [];
-    for (; ;) {
+    for (;;) {
       const line = this.parser.readTextLine();
       if (line === constants.PART_ELEMENT_OR_BEND_ATTRIBUTE_END) {
         break;
@@ -176,7 +181,7 @@ export class PartReader {
 
   private readPartOrPartCopyNamedAttributes(endToken: string): { [name: string]: string } {
     const attributes: { [name: string]: string } = {};
-    for (; ;) {
+    for (;;) {
       const line = this.parser.readTextLine();
       if (line === endToken) {
         break;
@@ -191,5 +196,4 @@ export class PartReader {
     }
     return attributes;
   }
-
 }

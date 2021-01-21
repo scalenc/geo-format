@@ -6,11 +6,11 @@ export const TAGS = {
   },
   ProcessingType: {
     name: 'PROCESS_TYPE', // Bearbeitungstyp (schneiden, kennzeichnen,..)
-    CUT: 'CUT',   // schneiden
+    CUT: 'CUT', // schneiden
     MARK: 'MARK', // kennzeichnen
     NONE: 'NONE', // ignorieren
     FORM: 'FORM', // umformen
-    FOIL_REMOVAL: 'FOIL_REMOVAL',  // Folienabziehhilfe
+    FOIL_REMOVAL: 'FOIL_REMOVAL', // Folienabziehhilfe
     CODE: 'CODE', // data matrix code
     LABEL_DATAMATRIX: 'LABEL_DATAMATRIX', // data matrix code
     LABEL_TEXT: 'LABEL_TEXT', // label text
@@ -27,17 +27,14 @@ export const TAGS = {
 };
 
 export class TagAttribute {
-  constructor(public name: string, public value: string, public type: number) {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(public name: string, public value: string, public type: number) {}
+
+  static fromText(text: string[]): TagAttribute {
+    return new TagAttribute(text.length > 1 ? text[1] : '', text.length > 0 ? text[0] : '', text.length > 2 ? +text[2] : 0);
   }
 
-  static fromText(text: string[]) {
-    return new TagAttribute(
-      text.length > 1 ? text[1] : '',
-      text.length > 0 ? text[0] : '',
-      text.length > 2 ? +text[2] : 0);
-  }
-
-  toText() {
+  toText(): string[] {
     return [this.name, this.value, `${this.type}`];
   }
 }

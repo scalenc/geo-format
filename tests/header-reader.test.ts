@@ -4,7 +4,6 @@ import { HeaderReader } from '../src/persistency/header-reader';
 import { Parser } from '../src/persistency/parser';
 
 describe('test HeaderReader', () => {
-
   const makeValidHeaderText = (version: string) => `${version}
 4
 02.06.2015
@@ -82,5 +81,4 @@ describe('test HeaderReader', () => {
     const reader = new HeaderReader(new Parser(makeValidHeaderText('1.05')));
     expect(() => reader.read()).throws(/Unknown GEO version/);
   });
-
 });

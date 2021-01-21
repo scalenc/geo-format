@@ -15,27 +15,15 @@ import { TextElement } from '../model/text-element';
 import { Vector } from '../model/vector';
 
 interface IPart {
-  points: { [key: number]: Vector; };
+  points: { [key: number]: Vector };
 }
 
-const COLORS = [
-  'aliceblue',
-  'black',
-  'red',
-  'yellow',
-  'green',
-  'cyan',
-  'blue',
-  'magenta',
-  'plum',
-  'brown',
-  'lightgrey',
-];
+const COLORS = ['aliceblue', 'black', 'red', 'yellow', 'green', 'cyan', 'blue', 'magenta', 'plum', 'brown', 'lightgrey'];
 const DASHES = ['', '10,10', '5,5', '10,10,5,10', '10,10,5,5,5,10', '15,10', '10,10', '10,10,5,10', ''];
 
 export class SvgWriter {
   private elementWriters = {
-    [ElementType.POINT]: this.writePoint.bind(this),
+    [ElementType.POINT]: SvgWriter.writePoint,
     [ElementType.LINE]: this.writeLine.bind(this),
     [ElementType.CIRCLE]: this.writeCircle.bind(this),
     [ElementType.ARC]: this.writeArc.bind(this),
@@ -49,12 +37,11 @@ export class SvgWriter {
   };
 
   public toSvg(file: GeoFile): string {
-    const min = file.header.min;
-    const max = file.header.max;
+    const { min, max } = file.header;
     const pointSymbol = '<symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol>';
     const viewPort = `viewBox="${min.x} ${-max.y} ${max.x - min.x} ${max.y - min.y}"`;
     const globalGroup = '<g stroke="#000000" stroke-width="1%" fill="none" transform="matrix(1,0,0,-1,0,0)">';
-    const parts = file.parts.map(p => this.writePart(p)).join('');
+    const parts = file.parts.map((p) => this.writePart(p)).join('');
     return `<svg ${viewPort} xmlns="http://www.w3.org/2000/svg">${globalGroup}${pointSymbol}${parts}</g></svg>`;
   }
 
@@ -62,12 +49,12 @@ export class SvgWriter {
     const elements = this.writeElements(part, part.elements);
     const contours = this.writeContours(part, part.contours);
     const bendings = this.writeBendings(part, part.bendings);
-    const copies = part.copies.map(copy => this.writePartCopy(part, copy)).join('');
+    const copies = part.copies.map((copy) => this.writePartCopy(part, copy)).join('');
     return `<g id="${part.name}">${elements}${contours}${bendings}</g>${copies}`;
   }
 
   private writeContours(part: IPart, contours: Contour[]) {
-    return contours.map(c => this.writeContour(part, c)).join('');
+    return contours.map((c) => this.writeContour(part, c)).join('');
   }
 
   private writeContour(part: IPart, contour: Contour) {
@@ -75,23 +62,24 @@ export class SvgWriter {
   }
 
   private writeElements(part: IPart, elements: Element[]) {
-    return elements.map(e => this.writeElement(part, e)).join('');
+    return elements.map((e) => this.writeElement(part, e)).join('');
   }
 
   private writeElement(part: IPart, element: Element) {
     const writer = this.elementWriters[element.type];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return writer(part, element as any);
   }
 
   private writeBendings(part: IPart, elements: Bending[]) {
-    return elements.map(b => this.writeBending(part, b)).join('');
+    return elements.map((b) => this.writeBending(part, b)).join('');
   }
 
   private writeBending(part: IPart, bending: Bending) {
     return this.writeElements(part, bending.bendingLines);
   }
 
-  private writePoint(part: IPart, element: PointElement) {
+  private static writePoint(part: IPart, element: PointElement) {
     const p = part.points[element.pointIndex];
     return `<use id="point" x="${p.x}" y="${p.y}" />`;
   }
@@ -107,17 +95,15 @@ export class SvgWriter {
     return `<circle ${this.writeStroke(element)} cx="${p.x}" cy="${p.y}" r="${element.radius}" />`;
   }
 
-  /* tslint:disable */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private writeConstructionLine(_part: IPart, _element: Element) {
     return ''; // Do not output construction geometries.
   }
-  /* tslint:enable */
 
-  /* tslint:disable */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private writeConstructionCircle(_part: IPart, _element: Element) {
     return ''; // Do not output construction geometries.
   }
-  /* tslint:enable */
 
   private writeArc(part: IPart, element: ArcSegment) {
     const pc = part.points[element.centerPointIndex];
@@ -175,7 +161,7 @@ export class SvgWriter {
     return element.color < 0 || element.color >= COLORS.length
       ? 'fill="none"'
       : element.stroke <= 0 || element.stroke >= DASHES.length - 1
-        ? `fill="none" stroke="${COLORS[element.color]}"`
-        : `fill="none" stroke="${COLORS[element.color]}" stroke-dasharray="${DASHES[element.stroke]}"`;
+      ? `fill="none" stroke="${COLORS[element.color]}"`
+      : `fill="none" stroke="${COLORS[element.color]}" stroke-dasharray="${DASHES[element.stroke]}"`;
   }
 }

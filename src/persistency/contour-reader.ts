@@ -33,7 +33,7 @@ export class ContourReader {
 
     const segments = [];
     const offsetSegments = [];
-    for (; ;) {
+    for (;;) {
       const section = this.parser.readSectionStartLine();
       if (section === constants.PART_CONTOUR_ELEMENT_SECTION) {
         segments.push(...this.elementReader.readList());
