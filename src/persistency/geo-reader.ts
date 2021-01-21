@@ -14,7 +14,7 @@ export class GeoReader {
 
     const partReader = new PartReader(parser);
     const parts = [];
-    for (; ;) {
+    for (;;) {
       const section = parser.readToken();
       if (section === constants.FILE_END) {
         break;

@@ -22,13 +22,13 @@ export interface Part {
   subpartsCount: number;
   isMirrored: number;
   mirroringIndex: number;
-  points: { [key: number]: Vector; };
+  points: { [key: number]: Vector };
   elements: Element[];
   contours: Contour[];
   copies: PartCopy[];
   bendings: Bending[];
   subparts: Subpart[];
-  attributes: { [key: string]: string; };
-  elementAttributes: { [key: number]: Attribute; };
-  bendingAttributes: { [key: number]: Attribute; };
+  attributes: { [key: string]: string };
+  elementAttributes: { [key: number]: Attribute };
+  bendingAttributes: { [key: number]: Attribute };
 }

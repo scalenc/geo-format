@@ -53,15 +53,17 @@ describe('test BendingReader', () => {
       text: '1 2 3\n45.0 20.0\n2.0 3.0\n1.3\n1\n2\n##~~\n#~371\nLIN\n1 0\n2 3\n|~\n##~~\n#~BIEG_END\n...',
       expect: {
         ...SAMPLE_BENDING,
-        bendingLines: [{
-          type: 'LIN',
-          color: 1,
-          stroke: 0,
-          startPointIndex: 2,
-          endPointIndex: 3,
-          isChamfer: false,
-          attributes: undefined,
-        } as LineSegment],
+        bendingLines: [
+          {
+            type: 'LIN',
+            color: 1,
+            stroke: 0,
+            startPointIndex: 2,
+            endPointIndex: 3,
+            isChamfer: false,
+            attributes: undefined,
+          } as LineSegment,
+        ],
       },
     },
   ].forEach((test) => {

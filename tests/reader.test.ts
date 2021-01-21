@@ -20,13 +20,11 @@ describe('test GeoReader', () => {
   ];
 
   sampleFiles.forEach((filename) => {
-
     it(`should read ${filename} without errors`, () => {
       const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
       const file = GeoReader.read(content);
       expect(file).to.be.not.null;
       expect(file).to.be.not.undefined;
     });
-
   });
 });

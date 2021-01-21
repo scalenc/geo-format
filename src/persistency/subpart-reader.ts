@@ -6,13 +6,13 @@ import { PointReader } from './point-reader';
 import { ContourReader } from './contour-reader';
 
 export class SubpartReader {
-  public constructor(private parser: Parser) {
-  }
+  // eslint-disable-next-line no-useless-constructor
+  public constructor(private parser: Parser) {}
 
   public read(): Subpart {
     const subpart = this.readDetails();
 
-    for (; ;) {
+    for (;;) {
       const section = this.parser.readSectionStartLine();
       if (section === constants.PART_POINTS_SECTION) {
         this.readPoints(subpart);
@@ -58,6 +58,7 @@ export class SubpartReader {
   }
 
   private readPoints(subpart: Subpart) {
+    // eslint-disable-next-line no-param-reassign
     subpart.points = PointReader.readPoints(this.parser);
   }
 
@@ -68,11 +69,13 @@ export class SubpartReader {
 
   private readElements(subpart: Subpart) {
     const elementReader = new ElementReader(this.parser);
+    // eslint-disable-next-line no-param-reassign
     subpart.elements = elementReader.readList();
   }
 
   private readBendingLines(subpart: Subpart) {
     const elementReader = new ElementReader(this.parser);
+    // eslint-disable-next-line no-param-reassign
     subpart.bendingLines = elementReader.readList();
   }
 }

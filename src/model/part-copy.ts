@@ -4,5 +4,5 @@ export interface PartCopy {
   info: string;
   number: number;
   transformation: Matrix;
-  attributes: { [key: string]: string; };
+  attributes: { [key: string]: string };
 }

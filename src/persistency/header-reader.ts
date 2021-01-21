@@ -3,8 +3,8 @@ import { Parser } from './parser';
 import * as constants from './constants';
 
 export class HeaderReader {
-  public constructor(private parser: Parser) {
-  }
+  // eslint-disable-next-line no-useless-constructor
+  public constructor(private parser: Parser) {}
 
   public read(): Header {
     const version = this.parser.readTextLine();
@@ -34,6 +34,7 @@ export class HeaderReader {
   }
 
   private readDetails(header: Header) {
+    /* eslint-disable no-param-reassign */
     header.name = this.parser.readTextLine();
     header.description = this.parser.readTextLine();
     header.customer = this.parser.readTextLine();
@@ -57,5 +58,6 @@ export class HeaderReader {
       header.isAssemblyPart = this.parser.readIntLine();
       header.assemblyName = this.parser.readTextLine();
     }
+    /* eslint-enable no-param-reassign */
   }
 }

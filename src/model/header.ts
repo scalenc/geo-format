@@ -1,11 +1,11 @@
 import { Vector } from './vector';
 
-export const VERSIONS: any = {
+export const VERSIONS = {
   V1_01: '1.01',
   V1_02: '1.02',
   V1_03: '1.03',
 
-  get current() {
+  get current(): string {
     return this.V1_03;
   },
 

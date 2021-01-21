@@ -35,7 +35,7 @@ export class BendingReader {
     this.parser.readExpectedSectionEndLine(constants.PART_BENDING_SECTION_END);
 
     const bendingLines = [];
-    for (; ;) {
+    for (;;) {
       const section = this.parser.readSectionStartLine();
       if (section === constants.PART_BENDING_ELEMENT_SECTION) {
         bendingLines.push(...this.elementReader.readList());
@@ -61,7 +61,7 @@ export class BendingReader {
     };
   }
 
-  readAttributes() {
+  readAttributes(): number[] | undefined {
     const count = this.parser.readIntLine();
     if (count > 0) {
       const attributes = [];
