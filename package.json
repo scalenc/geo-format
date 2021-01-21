@@ -1,19 +1,27 @@
 {
-  "name": "geo-format",
-  "version": "1.0.0",
+  "name": "@scalenc/geo-format",
+  "version": "0.1.0",
   "description": "Library for handling TRUMPF GEO file format.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "mocha -r ts-node/register tests/*.test.ts --exit",
-    "coverage": "nyc --reporter lcov npm run test"
+    "coverage": "nyc --reporter lcov npm run test",
+    "build": "tsc",
+    "prepublish": "tsc"
   },
   "mocha": {
     "diff": true,
-    "extension": [ "ts" ],
+    "extension": [
+      "ts"
+    ],
     "spec": "tests/**/*.test.ts",
     "require": "ts-node/register",
-    "watch-files": [ "src/**/*.ts", "tests/**/*.ts" ],
+    "watch-files": [
+      "src/**/*.ts",
+      "tests/**/*.ts"
+    ],
     "watch-ignore": []
   },
   "pre-commit": [
@@ -32,5 +40,5 @@
     "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.8.3"
   },
-  "license": "ISC"
+  "license": "UNLICENSED"
 }
