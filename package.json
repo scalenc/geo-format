@@ -1,6 +1,6 @@
 {
   "name": "@scalenc/geo-format",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Library for handling TRUMPF GEO file format.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,8 +9,7 @@
     "test": "mocha -r ts-node/register tests/*.test.ts --exit",
     "coverage": "nyc --reporter lcov npm run test",
     "build": "tsc",
-    "prepublish": "tsc",
-    "postinstall": "husky install"
+    "prepublish": "tsc"
   },
   "mocha": {
     "diff": true,
