@@ -19,3 +19,5 @@ out-logger.json
 
 dump/
 dist/
+
+*.log
