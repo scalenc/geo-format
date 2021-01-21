@@ -17,9 +17,9 @@ build:
 
 deploy:
   stage: deploy
-  only:
-    refs:
-      - master
+  # only:
+  #   refs:
+  #     - master
   script:
     - echo "//gitlab.example.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" > .npmrc
     - yarn
