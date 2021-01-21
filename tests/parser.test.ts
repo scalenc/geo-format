@@ -134,9 +134,7 @@ describe('tests Parser', () => {
     expect(() => parser.readIntLine()).throws(/Expected new line/);
   });
 
-  [
-    { text: '1.0 2.0 3.0 more', expected: { x: 1, y: 2, z: 3 } },
-  ].forEach((test) => {
+  [{ text: '1.0 2.0 3.0 more', expected: { x: 1, y: 2, z: 3 } }].forEach((test) => {
     it(`should readVector for ${JSON.stringify(test.text)}`, () => {
       const parser = new Parser(test.text);
       const actual = parser.readVector();
@@ -172,7 +170,14 @@ describe('tests Parser', () => {
   [
     {
       text: '1.0 2.0 3.0 4.0\n5.0 6.0 7.0 8.0\n9.0 10.0 11.0 12.0\n13.0 14.0 15.0 16.0\n...',
-      expected: { values: [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]] },
+      expected: {
+        values: [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12],
+          [13, 14, 15, 16],
+        ],
+      },
     },
   ].forEach((test) => {
     it(`should readMatrixLines for ${JSON.stringify(test.text)}`, () => {
@@ -246,9 +251,7 @@ describe('tests Parser', () => {
     });
   });
 
-  [
-    { text: '##~~\n...', expected: '##~~' },
-  ].forEach((test) => {
+  [{ text: '##~~\n...', expected: '##~~' }].forEach((test) => {
     it(`should not throw readExpectedTokenLine for ${JSON.stringify(test.text)}`, () => {
       const parser = new Parser(test.text);
       expect(() => parser.readExpectedTokenLine(test.expected, 'TOKEN TYPE')).to.not.throw();
@@ -264,5 +267,4 @@ describe('tests Parser', () => {
       expect(() => parser.readExpectedTokenLine(test.expected, 'TOKEN TYPE')).throws(test.throws);
     });
   });
-
 });

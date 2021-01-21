@@ -4,16 +4,21 @@
   "description": "Library for handling TRUMPF GEO file format.",
   "main": "index.js",
   "scripts": {
-    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "lint": "eslint .",
     "test": "mocha -r ts-node/register tests/*.test.ts --exit",
     "coverage": "nyc --reporter lcov npm run test"
   },
   "mocha": {
     "diff": true,
-    "extension": [ "ts" ],
+    "extension": [
+      "ts"
+    ],
     "spec": "tests/**/*.test.ts",
     "require": "ts-node/register",
-    "watch-files": [ "src/**/*.ts", "tests/**/*.ts" ],
+    "watch-files": [
+      "src/**/*.ts",
+      "tests/**/*.ts"
+    ],
     "watch-ignore": []
   },
   "pre-commit": [
@@ -24,13 +29,28 @@
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.14.22",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
     "chai": "^4.2.0",
+    "eslint": "^7.18.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
     "mocha": "^7.1.2",
     "nyc": "^15.0.1",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0",
     "ts-node": "^8.9.1",
-    "tslint": "^6.1.2",
-    "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.8.3"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "./node_modules/.bin/eslint"
+    ],
+    "*.{js,jsx,ts,tsx,json,md}": [
+      "./node_modules/.bin/prettier --list-different"
+    ]
+  }
 }

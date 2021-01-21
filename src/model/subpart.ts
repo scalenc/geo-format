@@ -11,7 +11,7 @@ export interface Subpart {
   centerOfGravity: Vector;
   area: number;
   contoursCount: number;
-  points: { [key: number]: Vector; };
+  points: { [key: number]: Vector };
   elements: Element[];
   bendingLines: Element[];
   contours: Contour[];

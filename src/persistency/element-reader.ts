@@ -26,8 +26,7 @@ export class ElementReader {
     [ElementType.TEXT]: this.readText.bind(this),
   };
 
-  constructor(private parser: Parser) {
-  }
+  constructor(private parser: Parser) {}
 
   public readList(): Element[] {
     const elements = [];
@@ -198,5 +197,4 @@ export class ElementReader {
     }
     return attributes;
   }
-
 }

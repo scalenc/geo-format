@@ -3,7 +3,6 @@ import { Parser } from '../src/persistency/parser';
 import { PointReader } from '../src/persistency/point-reader';
 
 describe('test PointReader', () => {
-
   [
     {
       text: 'P\n1\n1.0 2.0 3.0\n|~\n##~~\n...',
@@ -18,7 +17,6 @@ describe('test PointReader', () => {
       expect: { 1: { x: 2, y: 3, z: 4 } },
     },
   ].forEach((test) => {
-
     it(`should readPoints from ${JSON.stringify(test.text)}`, () => {
       const parser = new Parser(test.text);
       const points = PointReader.readPoints(parser);
@@ -30,11 +28,9 @@ describe('test PointReader', () => {
     { text: 'P\n1\n1.0 2.0 3.0\n|~\n...', throws: /Unexpected end of file/ },
     { text: 'P\n1\n1.0 2.0 3.0\n##~~\n...', throws: /Expected section end "|~"/ },
   ].forEach((test) => {
-
     it(`should throw on readPoints from ${JSON.stringify(test.text)}`, () => {
       const parser = new Parser(test.text);
       expect(() => PointReader.readPoints(parser)).throws(test.throws);
     });
   });
-
 });
