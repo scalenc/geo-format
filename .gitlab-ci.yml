@@ -2,24 +2,21 @@ image: node:latest
 
 stages:
   - build
-  - deploy
+  - publish
 
 build:
   stage: build
-  except:
-    refs:
-      - master
   script:
     - yarn
     - yarn lint
     - yarn build
     - yarn test
 
-deploy:
-  stage: deploy
-  # only:
-  #   refs:
-  #     - master
+publish:
+  stage: publish
+  only:
+    refs:
+      - master
   script:
     - |
       {
@@ -27,6 +24,4 @@ deploy:
         echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
       } | tee --append .npmrc
     - yarn
-    - yarn build
-    - yarn test
     - yarn publish

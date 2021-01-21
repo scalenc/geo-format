@@ -1,6 +1,6 @@
 {
   "name": "@scalenc/geo-format",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Library for handling TRUMPF GEO file format.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
