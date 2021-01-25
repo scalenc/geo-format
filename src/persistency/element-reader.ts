@@ -9,7 +9,7 @@ import { ConstructionLineElement } from '../model/construction-line-element';
 import { ConstructionCircleElement } from '../model/construction-circle-element';
 import { ArrowElement } from '../model/arrow-element';
 import { QuadElement } from '../model/quad-element';
-import { TextElement } from '../model/text-element';
+import { TextAlignment, TextElement, TextOrientation } from '../model/text-element';
 
 export class ElementReader {
   private elementReaders = {
@@ -160,9 +160,9 @@ export class ElementReader {
     this.parser.skipWhiteSpace();
     const textAngle = this.parser.readDoubleLine();
 
-    const textAlignment = this.parser.readInt();
+    const textAlignment = this.parser.readInt() as TextAlignment;
     this.parser.skipWhiteSpace();
-    const textOrientation = this.parser.readInt();
+    const textOrientation = this.parser.readInt() as TextOrientation;
     this.parser.skipWhiteSpace();
 
     const count = this.parser.readIntLine();
