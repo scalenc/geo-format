@@ -11,7 +11,7 @@ import { Part } from '../model/part';
 import { PartCopy } from '../model/part-copy';
 import { PointElement } from '../model/point-element';
 import { QuadElement } from '../model/quad-element';
-import { TextElement } from '../model/text-element';
+import { TextAlignment, TextElement } from '../model/text-element';
 import { Vector } from '../model/vector';
 
 interface IPart {
@@ -40,7 +40,7 @@ export class SvgWriter {
     const { min, max } = file.header;
     const pointSymbol = '<symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol>';
     const viewPort = `viewBox="${min.x} ${-max.y} ${max.x - min.x} ${max.y - min.y}"`;
-    const globalGroup = '<g stroke="#000000" stroke-width="1%" fill="none" transform="matrix(1,0,0,-1,0,0)">';
+    const globalGroup = '<g stroke="#000000" stroke-width="1%" fill="none">';
     const parts = file.parts.map((p) => this.writePart(p)).join('');
     return `<svg ${viewPort} xmlns="http://www.w3.org/2000/svg">${globalGroup}${pointSymbol}${parts}</g></svg>`;
   }
@@ -81,18 +81,18 @@ export class SvgWriter {
 
   private static writePoint(part: IPart, element: PointElement) {
     const p = part.points[element.pointIndex];
-    return `<use id="point" x="${p.x}" y="${p.y}" />`;
+    return `<use id="point" x="${p.x}" y="${-p.y}" />`;
   }
 
   private writeLine(part: IPart, element: LineSegment) {
     const p1 = part.points[element.startPointIndex];
     const p2 = part.points[element.endPointIndex];
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${p1.y} L${p2.x} ${p2.y}" />`;
+    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p2.x} ${-p2.y}" />`;
   }
 
   private writeCircle(part: IPart, element: CircleElement) {
     const p = part.points[element.centerPointIndex];
-    return `<circle ${this.writeStroke(element)} cx="${p.x}" cy="${p.y}" r="${element.radius}" />`;
+    return `<circle ${this.writeStroke(element)} cx="${p.x}" cy="${-p.y}" r="${element.radius}" />`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -117,8 +117,8 @@ export class SvgWriter {
       spanAngle += 2 * Math.PI;
     }
     const large = spanAngle >= Math.PI ? 1 : 0;
-    const sweep = element.orientation > 0 ? 1 : 0;
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${p1.y} A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${p2.y}" />`;
+    const sweep = element.orientation < 0 ? 1 : 0;
+    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${-p2.y}" />`;
   }
 
   private writeArrow(part: IPart, element: ArrowElement) {
@@ -132,7 +132,7 @@ export class SvgWriter {
     const p3 = { x: p2.x - dx * element.tipLength, y: p2.y - dy * element.tipLength };
     const p4 = { x: p3.x + dy * element.tipWidth, y: p3.y - dx * element.tipWidth };
     const p5 = { x: p3.x - dy * element.tipWidth, y: p3.y + dx * element.tipWidth };
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${p1.y} L${p3.x} ${p3.y} L${p4.x} ${p4.y} L${p2.x} ${p2.y} L${p5.x} ${p5.y} L${p3.x} ${p3.y}" />`;
+    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y} L${p2.x} ${-p2.y} L${p5.x} ${-p5.y} L${p3.x} ${-p3.y}" />`;
   }
 
   private writeQuad(part: IPart, element: QuadElement) {
@@ -140,12 +140,16 @@ export class SvgWriter {
     const p2 = part.points[element.cornerPoint2Index];
     const p3 = part.points[element.cornerPoint3Index];
     const p4 = part.points[element.cornerPoint4Index];
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${p1.y} L${p2.x} ${p2.y} L${p3.x} ${p3.y} L${p4.x} ${p4.y} Z" />`;
+    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p2.x} ${-p2.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y} Z" />`;
   }
 
   private writeText(part: IPart, element: TextElement) {
     const p1 = part.points[element.startPointIndex];
-    return `<text x="${p1.x}" y="${p1.y}" font-size="${element.charHeight}" font-family="serif"><![CDATA[${element.text.join('\n')}]]></text>`;
+    const size = element.charHeight;
+    const anchor = element.textAlignment & TextAlignment.HORIZONTAL_CENTER ? 'middle' : element.textAlignment & TextAlignment.HORIZONTAL_RIGHT ? 'end' : 'start';
+    const baseline = element.textAlignment & TextAlignment.VERTICAL_CENTER ? 'middle' : element.textAlignment & TextAlignment.VERTICAL_TOP ? 'hanging' : 'auto';
+    const text = element.text.join('\n');
+    return `<text x="${p1.x}" y="${-p1.y}" text-anchor="${anchor}" dominant-baseline="${baseline}" font-size="${size}" font-family="serif"><![CDATA[${text}]]></text>`;
   }
 
   private writePartCopy(part: Part, copy: PartCopy) {
@@ -154,7 +158,7 @@ export class SvgWriter {
 
   private writeTransform(matrix: Matrix) {
     const m = matrix.values;
-    return `matrix(${m[0][0]}, ${m[1][0]}, ${m[0][1]}, ${m[1][1]}, ${m[3][0]}, ${m[3][1]})`; // FIXME correct?
+    return `matrix(${m[0][0]}, ${-m[1][0]}, ${-m[0][1]}, ${m[1][1]}, ${m[3][0]}, ${-m[3][1]})`; // FIXME correct?
   }
 
   private writeStroke(element: Element) {

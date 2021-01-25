@@ -14,11 +14,11 @@ import { LineSegment } from './model/line-segment';
 import { Matrix } from './model/matrix';
 import { Part } from './model/part';
 import { PartCopy } from './model/part-copy';
-import { PointElement } from './model/point-element';
+import { PointElement, PointType } from './model/point-element';
 import { QuadElement } from './model/quad-element';
 import { Subpart } from './model/subpart';
 import { TAGS, TagAttribute } from './model/tag-attribute';
-import { TextElement } from './model/text-element';
+import { TextAlignment, TextElement, TextOrientation } from './model/text-element';
 import { Vector } from './model/vector';
 import { GeoReader } from './persistency/geo-reader';
 import { SvgWriter } from './persistency/svg-writer';
@@ -50,10 +50,13 @@ export {
   PartCopy,
   Part,
   PointElement,
+  PointType,
   QuadElement,
   Subpart,
   TAGS,
   TagAttribute,
+  TextAlignment,
+  TextOrientation,
   TextElement,
   Vector,
   // persistency
