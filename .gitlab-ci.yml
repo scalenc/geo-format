@@ -12,8 +12,8 @@ build:
     - yarn build
     - yarn coverage # includes yarn test
   artifacts:
-      paths:
-        - coverage/
+    reports:
+      cobertura: coverage/cobertura-coverage.xml
 
 publish:
   stage: publish
