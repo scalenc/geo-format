@@ -21,8 +21,14 @@ describe('test ElementReader', () => {
 
   [
     /* tslint:disable */
-    { text: 'LIN\n1 0\n2 1\n|~\n...', expect: { type: 'LIN', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: false, attributes: undefined } as LineSegment },
-    { text: 'CHA\n1 0\n2 1\n|~\n...', expect: { type: 'CHA', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: true, attributes: undefined } as LineSegment },
+    {
+      text: 'LIN\n1 0\n2 1\n|~\n...',
+      expect: { type: 'LIN', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: false, attributes: undefined } as LineSegment,
+    },
+    {
+      text: 'CHA\n1 0\n2 1\n|~\n...',
+      expect: { type: 'CHA', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: true, attributes: undefined } as LineSegment,
+    },
     {
       text: 'ARC\n1 0\n13 14 15\n1\n|~\n...',
       expect: {
@@ -51,7 +57,10 @@ describe('test ElementReader', () => {
         attributes: undefined,
       } as ArcSegment,
     },
-    { text: 'CIR\n1 0\n13\n0.123\n|~\n...', expect: { type: 'CIR', color: 1, stroke: 0, centerPointIndex: 13, radius: 0.123, attributes: undefined } as CircleElement },
+    {
+      text: 'CIR\n1 0\n13\n0.123\n|~\n...',
+      expect: { type: 'CIR', color: 1, stroke: 0, centerPointIndex: 13, radius: 0.123, attributes: undefined } as CircleElement,
+    },
     {
       text: 'CCIR\n1 0\n13\n0.123\n|~\n...',
       expect: { type: 'CCIR', color: 1, stroke: 0, centerPointIndex: 13, radius: 0.123, attributes: undefined } as ConstructionCircleElement,
@@ -63,7 +72,16 @@ describe('test ElementReader', () => {
     },
     {
       text: 'LED\n1 0\n13 14\n1.0 2.3\n|~\n...',
-      expect: { type: 'LED', color: 1, stroke: 0, startPointIndex: 13, endPointIndex: 14, tipLength: 1.0, tipWidth: 2.3, attributes: undefined } as ArrowElement,
+      expect: {
+        type: 'LED',
+        color: 1,
+        stroke: 0,
+        startPointIndex: 13,
+        endPointIndex: 14,
+        tipLength: 1.0,
+        tipWidth: 2.3,
+        attributes: undefined,
+      } as ArrowElement,
     },
     {
       text: 'QUAD\n1 0\n13 14 15 16\n1 2\n|~\n...',

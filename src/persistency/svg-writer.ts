@@ -132,7 +132,9 @@ export class SvgWriter {
     const p3 = { x: p2.x - dx * element.tipLength, y: p2.y - dy * element.tipLength };
     const p4 = { x: p3.x + dy * element.tipWidth, y: p3.y - dx * element.tipWidth };
     const p5 = { x: p3.x - dy * element.tipWidth, y: p3.y + dx * element.tipWidth };
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y} L${p2.x} ${-p2.y} L${p5.x} ${-p5.y} L${p3.x} ${-p3.y}" />`;
+    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y} L${p2.x} ${-p2.y} L${p5.x} ${-p5.y} L${
+      p3.x
+    } ${-p3.y}" />`;
   }
 
   private writeQuad(part: IPart, element: QuadElement) {
@@ -146,10 +148,13 @@ export class SvgWriter {
   private writeText(part: IPart, element: TextElement) {
     const p1 = part.points[element.startPointIndex];
     const size = element.charHeight;
-    const anchor = element.textAlignment & TextAlignment.HORIZONTAL_CENTER ? 'middle' : element.textAlignment & TextAlignment.HORIZONTAL_RIGHT ? 'end' : 'start';
+    const anchor =
+      element.textAlignment & TextAlignment.HORIZONTAL_CENTER ? 'middle' : element.textAlignment & TextAlignment.HORIZONTAL_RIGHT ? 'end' : 'start';
     const baseline = element.textAlignment & TextAlignment.VERTICAL_CENTER ? 'middle' : element.textAlignment & TextAlignment.VERTICAL_TOP ? 'hanging' : 'auto';
     const text = element.text.join('\n');
-    return `<text x="${p1.x}" y="${-p1.y}" text-anchor="${anchor}" dominant-baseline="${baseline}" font-size="${size}" font-family="serif"><![CDATA[${text}]]></text>`;
+    return `<text x="${
+      p1.x
+    }" y="${-p1.y}" text-anchor="${anchor}" dominant-baseline="${baseline}" font-size="${size}" font-family="serif"><![CDATA[${text}]]></text>`;
   }
 
   private writePartCopy(part: Part, copy: PartCopy) {
