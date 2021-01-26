@@ -10,7 +10,10 @@ build:
     - yarn
     - yarn lint
     - yarn build
-    - yarn test
+    - yarn coverage # includes yarn test
+  artifacts:
+      paths:
+        - coverage/
 
 publish:
   stage: publish

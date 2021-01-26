@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "mocha -r ts-node/register tests/*.test.ts --exit",
-    "coverage": "nyc --reporter lcov npm run test",
+    "coverage": "nyc --reporter lcov yarn test",
     "build": "tsc",
     "prepublish": "tsc"
   },
