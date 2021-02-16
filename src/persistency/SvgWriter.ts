@@ -2,8 +2,8 @@ import { ArcSegment } from '../model/ArcSegment';
 import { ArrowElement } from '../model/ArrowElement';
 import { Bending } from '../model/Bending';
 import { CircleElement } from '../model/CircleElement';
-import { Contour } from '../model/Contour';
-import { Element, ElementType } from '../model/Element';
+import { Contour, ContourType } from '../model/Contour';
+import { Element, ElementColor, ElementType } from '../model/Element';
 import { GeoFile } from '../model/GeoFile';
 import { LineSegment } from '../model/LineSegment';
 import { Matrix } from '../model/Matrix';
@@ -20,20 +20,29 @@ interface IPart {
 
 const COLORS = ['aliceblue', 'black', 'red', 'yellow', 'green', 'cyan', 'blue', 'magenta', 'plum', 'brown', 'lightgrey'];
 const DASHES = ['', '10,10', '5,5', '10,10,5,10', '10,10,5,5,5,10', '15,10', '10,10', '10,10,5,10', ''];
-
+type ElementWriter = (part: IPart, element: Element) => string;
+type FragmentWriter = (part: IPart, element: Element, withStart: boolean) => string;
 export class SvgWriter {
-  private elementWriters = {
-    [ElementType.POINT]: SvgWriter.writePoint,
-    [ElementType.LINE]: this.writeLine.bind(this),
-    [ElementType.CIRCLE]: this.writeCircle.bind(this),
-    [ElementType.ARC]: this.writeArc.bind(this),
-    [ElementType.CONSTRUCTION_LINE]: this.writeConstructionLine.bind(this),
-    [ElementType.CONSTRUCTION_CIRCLE]: this.writeConstructionCircle.bind(this),
-    [ElementType.CHAMFER]: this.writeLine.bind(this),
-    [ElementType.ROUNDING]: this.writeArc.bind(this),
-    [ElementType.ARROW]: this.writeArrow.bind(this),
-    [ElementType.QUAD]: this.writeQuad.bind(this),
-    [ElementType.TEXT]: this.writeText.bind(this),
+  private elementWriters: { [key: string]: ElementWriter } = {
+    [ElementType.POINT]: <ElementWriter>SvgWriter.writePoint,
+    [ElementType.LINE]: <ElementWriter>this.writeLine.bind(this),
+    [ElementType.CIRCLE]: <ElementWriter>this.writeCircle.bind(this),
+    [ElementType.ARC]: <ElementWriter>this.writeArc.bind(this),
+    [ElementType.CONSTRUCTION_LINE]: <ElementWriter>this.writeConstructionLine.bind(this),
+    [ElementType.CONSTRUCTION_CIRCLE]: <ElementWriter>this.writeConstructionCircle.bind(this),
+    [ElementType.CHAMFER]: <ElementWriter>this.writeLine.bind(this),
+    [ElementType.ROUNDING]: <ElementWriter>this.writeArc.bind(this),
+    [ElementType.ARROW]: <ElementWriter>this.writeArrow.bind(this),
+    [ElementType.QUAD]: <ElementWriter>this.writeQuad.bind(this),
+    [ElementType.TEXT]: <ElementWriter>this.writeText.bind(this),
+  };
+  private elementPathFragmentWriters: { [key: string]: FragmentWriter } = {
+    [ElementType.LINE]: <FragmentWriter>this.writeLineFragment.bind(this),
+    [ElementType.CIRCLE]: <FragmentWriter>this.writeCircleFragment.bind(this),
+    [ElementType.ARC]: <FragmentWriter>this.writeArcFragment.bind(this),
+    [ElementType.CHAMFER]: <FragmentWriter>this.writeLineFragment.bind(this),
+    [ElementType.ROUNDING]: <FragmentWriter>this.writeArcFragment.bind(this),
+    [ElementType.QUAD]: <FragmentWriter>this.writeQuadFragment.bind(this),
   };
 
   public toSvg(file: GeoFile): string {
@@ -54,11 +63,17 @@ export class SvgWriter {
   }
 
   private writeContours(part: IPart, contours: Contour[]) {
-    return contours.map((c) => this.writeContour(part, c)).join('');
+    const nonPathElements: Element[] = [];
+    const contourFragments = contours.map((c) => this.writeContourFragment(part, c, nonPathElements));
+    const path = contourFragments.length ? `<path fill="white" stroke="${COLORS[ElementColor.WHITE]}" d="${contourFragments.join(' ')}" />` : '';
+    return `${path}${this.writeElements(part, nonPathElements)}`;
   }
 
-  private writeContour(part: IPart, contour: Contour) {
-    return this.writeElements(part, contour.segments);
+  private writeContourFragment(part: IPart, contour: Contour, nonPathElements: Element[]) {
+    const pathElements: Element[] = [];
+    contour.segments.forEach((e: Element) => (this.elementPathFragmentWriters[e.type] ? pathElements : nonPathElements).push(e));
+    const path = pathElements.map((e, i) => this.elementPathFragmentWriters[e.type](part, <ArcSegment & LineSegment>e, i == 0)).join(' ');
+    return `${path}${path.length && contour.type === ContourType.CLOSED ? ' Z' : ''}`;
   }
 
   private writeElements(part: IPart, elements: Element[]) {
@@ -67,8 +82,7 @@ export class SvgWriter {
 
   private writeElement(part: IPart, element: Element) {
     const writer = this.elementWriters[element.type];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return writer(part, element as any);
+    return writer(part, element);
   }
 
   private writeBendings(part: IPart, elements: Bending[]) {
@@ -85,14 +99,27 @@ export class SvgWriter {
   }
 
   private writeLine(part: IPart, element: LineSegment) {
+    return `<path ${this.writeStroke(element)} d="${this.writeLineFragment(part, element)}" />`;
+  }
+
+  private writeLineFragment(part: IPart, element: LineSegment, withStart = true) {
     const p1 = part.points[element.startPointIndex];
     const p2 = part.points[element.endPointIndex];
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p2.x} ${-p2.y}" />`;
+    return withStart ? `M${p1.x} ${-p1.y} L${p2.x} ${-p2.y}` : `L${p2.x} ${-p2.y}`;
   }
 
   private writeCircle(part: IPart, element: CircleElement) {
     const p = part.points[element.centerPointIndex];
     return `<circle ${this.writeStroke(element)} cx="${p.x}" cy="${-p.y}" r="${element.radius}" />`;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private writeCircleFragment(part: IPart, element: CircleElement, _withStart = true) {
+    const r = element.radius;
+    const c = part.points[element.centerPointIndex];
+    const p1 = { x: c.x + r, y: c.y };
+    const p2 = { x: c.x - r, y: c.y };
+    return `M${p1.x} ${-p1.y} A${r} ${r} 0 1 0 ${p2.x} ${-p2.y} A${r} ${r} 0 1 0 ${p1.x} ${-p1.y}`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -106,6 +133,10 @@ export class SvgWriter {
   }
 
   private writeArc(part: IPart, element: ArcSegment) {
+    return `<path ${this.writeStroke(element)} d="${this.writeArcFragment(part, element)}" />`;
+  }
+
+  private writeArcFragment(part: IPart, element: ArcSegment, withStart = true) {
     const pc = part.points[element.centerPointIndex];
     const p1 = part.points[element.startPointIndex];
     const p2 = part.points[element.endPointIndex];
@@ -118,7 +149,7 @@ export class SvgWriter {
     }
     const large = spanAngle >= Math.PI ? 1 : 0;
     const sweep = element.orientation < 0 ? 1 : 0;
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${-p2.y}" />`;
+    return withStart ? `M${p1.x} ${-p1.y} A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${-p2.y}` : `A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${-p2.y}`;
   }
 
   private writeArrow(part: IPart, element: ArrowElement) {
@@ -138,11 +169,16 @@ export class SvgWriter {
   }
 
   private writeQuad(part: IPart, element: QuadElement) {
+    return `<path ${this.writeStroke(element)} d="${this.writeQuadFragment(part, element)} Z" />`;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private writeQuadFragment(part: IPart, element: QuadElement, _withStart = true) {
     const p1 = part.points[element.cornerPoint1Index];
     const p2 = part.points[element.cornerPoint2Index];
     const p3 = part.points[element.cornerPoint3Index];
     const p4 = part.points[element.cornerPoint4Index];
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p2.x} ${-p2.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y} Z" />`;
+    return `M${p1.x} ${-p1.y} L${p2.x} ${-p2.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y}`;
   }
 
   private writeText(part: IPart, element: TextElement) {
