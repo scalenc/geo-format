@@ -14,15 +14,23 @@ import { QuadElement } from '../model/QuadElement';
 import { TextAlignment, TextElement } from '../model/TextElement';
 import { Vector } from '../model/Vector';
 
+export interface GeoOptions {
+  targetStrokeWidth: number;
+  targetWidth: number;
+  targetHeight: number;
+}
+
 interface IPart {
   points: { [key: number]: Vector };
 }
 
-const COLORS = ['aliceblue', 'black', 'red', 'yellow', 'green', 'cyan', 'blue', 'magenta', 'plum', 'brown', 'lightgrey'];
 const DASHES = ['', '10,10', '5,5', '10,10,5,10', '10,10,5,5,5,10', '15,10', '10,10', '10,10,5,10', ''];
 type ElementWriter = (part: IPart, element: Element) => string;
 type FragmentWriter = (part: IPart, element: Element, withStart: boolean) => string;
+
 export class SvgWriter {
+  private readonly colorPallet = ['white', 'black', 'red', 'yellow', 'green', 'cyan', 'blue', 'magenta', 'plum', 'brown', 'lightgrey'];
+
   private elementWriters: { [key: string]: ElementWriter } = {
     [ElementType.POINT]: <ElementWriter>SvgWriter.writePoint,
     [ElementType.LINE]: <ElementWriter>this.writeLine.bind(this),
@@ -45,13 +53,44 @@ export class SvgWriter {
     [ElementType.QUAD]: <FragmentWriter>this.writeQuadFragment.bind(this),
   };
 
-  public toSvg(file: GeoFile): string {
+  public toSvg(file: GeoFile, options?: GeoOptions): string {
     const { min, max } = file.header;
     const pointSymbol = '<symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol>';
-    const viewPort = `viewBox="${min.x} ${-max.y} ${max.x - min.x} ${max.y - min.y}"`;
-    const globalGroup = '<g stroke="#000000" stroke-width="1%" fill="none">';
+    const svgWidth = max.x - min.x;
+    const svgHeight = max.y - min.y;
+    let svgStrokeWidth = '1%';
+    let padding = 0;
+    if (options) {
+      const effectiveStrokeWidth = options.targetStrokeWidth * Math.max(svgWidth / options.targetWidth, svgHeight / options.targetHeight);
+      padding = effectiveStrokeWidth / 2;
+      svgStrokeWidth = `${effectiveStrokeWidth}px`;
+    }
+    const viewPort = `viewBox="${min.x - padding} ${-max.y - padding} ${svgWidth + padding * 2} ${svgHeight + padding * 2}"`;
+    const dimensions = options ? ` width="${options.targetWidth}" height="${options.targetHeight}"` : '';
+    const globalGroup = `<g stroke="#000000" stroke-width="${svgStrokeWidth}" fill="none">`;
     const parts = file.parts.map((p) => this.writePart(p)).join('');
-    return `<svg ${viewPort} xmlns="http://www.w3.org/2000/svg">${globalGroup}${pointSymbol}${parts}</g></svg>`;
+    return `<svg ${viewPort}${dimensions} xmlns="http://www.w3.org/2000/svg">${globalGroup}${pointSymbol}${parts}</g></svg>`;
+  }
+
+  /**
+   *
+   BLACK = 0 (background color),
+   WHITE = 1 (stroke color),
+   RED = 2,
+   YELLOW = 3,
+   GREEN = 4,
+   CYAN = 5,
+   BLUE = 6,
+   MAGENTA = 7,
+   HIGHLIGHT_1 = 8,
+   HIGHLIGHT_2 = 9,
+   LIGHT_GREY = 10,
+   * @param colorPalette
+   */
+  public setColors(colorPalette: Array<string>): void {
+    Object.keys(colorPalette).forEach((colorKey) => {
+      this.colorPallet[+colorKey] = colorPalette[+colorKey];
+    });
   }
 
   private writePart(part: Part) {
@@ -65,7 +104,9 @@ export class SvgWriter {
   private writeContours(part: IPart, contours: Contour[]) {
     const nonPathElements: Element[] = [];
     const contourFragments = contours.map((c) => this.writeContourFragment(part, c, nonPathElements));
-    const path = contourFragments.length ? `<path fill="white" stroke="${COLORS[ElementColor.WHITE]}" d="${contourFragments.join(' ')}" />` : '';
+    const path = contourFragments.length
+      ? `<path fill="${this.colorPallet[ElementColor.BLACK]}" stroke="${this.colorPallet[ElementColor.WHITE]}" d="${contourFragments.join(' ')}" />`
+      : '';
     return `${path}${this.writeElements(part, nonPathElements)}`;
   }
 
@@ -203,10 +244,10 @@ export class SvgWriter {
   }
 
   private writeStroke(element: Element) {
-    return element.color < 0 || element.color >= COLORS.length
+    return element.color < 0 || element.color >= this.colorPallet.length
       ? 'fill="none"'
       : element.stroke <= 0 || element.stroke >= DASHES.length - 1
-      ? `fill="none" stroke="${COLORS[element.color]}"`
-      : `fill="none" stroke="${COLORS[element.color]}" stroke-dasharray="${DASHES[element.stroke]}"`;
+      ? `fill="none" stroke="${this.colorPallet[element.color]}"`
+      : `fill="none" stroke="${this.colorPallet[element.color]}" stroke-dasharray="${DASHES[element.stroke]}"`;
   }
 }
