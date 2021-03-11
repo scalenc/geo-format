@@ -35,4 +35,37 @@ describe('test SvgWriter', () => {
       expect(expectedSvg).to.eq(svg);
     });
   });
+
+  it(`should write expected colored svg for 300T80X100.svg`, () => {
+    const filename = '300T80X100.geo';
+    const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
+    const file = GeoReader.read(content);
+    const svgWriter = new SvgWriter();
+    svgWriter.setColors(['orange', 'blue']);
+    const svg = svgWriter.toSvg(file);
+    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
+    fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '-colored.svg')), svg);
+
+    const coloredSvgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '-colored.svg'));
+    const expectedColoredSvg = fs.readFileSync(coloredSvgFilename).toString('utf-8');
+    expect(expectedColoredSvg).to.eq(svg);
+  });
+
+  it(`should write expected padded svg for 300T80X100.svg`, () => {
+    const filename = '300T80X100.geo';
+    const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
+    const file = GeoReader.read(content);
+    const svgWriter = new SvgWriter();
+    const svg = svgWriter.toSvg(file, {
+      targetWidth: 1000,
+      targetHeight: 1000,
+      targetStrokeWidth: 18,
+    });
+    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
+    fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '-padded.svg')), svg);
+
+    const coloredSvgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '-padded.svg'));
+    const expectedColoredSvg = fs.readFileSync(coloredSvgFilename).toString('utf-8');
+    expect(expectedColoredSvg).to.eq(svg);
+  });
 });

@@ -14,7 +14,9 @@ export enum ElementType {
 
 export enum ElementColor {
   UNDEFINED = -1,
+  /** Background color */
   BLACK = 0,
+  /** Stroke color */
   WHITE = 1,
   RED = 2,
   YELLOW = 3,
