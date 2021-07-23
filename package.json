@@ -32,7 +32,7 @@
     "ts-node": "^8.9.1",
     "typescript": "^3.8.3"
   },
-  "license": "UNLICENSED",
+  "license": "BSD-3-CLAUSE",
   "mocha": {
     "diff": true,
     "extension": [
