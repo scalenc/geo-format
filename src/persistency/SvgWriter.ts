@@ -58,7 +58,7 @@ export class SvgWriter {
     const pointSymbol = '<symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol>';
     const svgWidth = max.x - min.x;
     const svgHeight = max.y - min.y;
-    let svgStrokeWidth = '1%';
+    let svgStrokeWidth = '0.1%';
     let padding = 0;
     if (options) {
       const effectiveStrokeWidth = options.targetStrokeWidth * Math.max(svgWidth / options.targetWidth, svgHeight / options.targetHeight);
