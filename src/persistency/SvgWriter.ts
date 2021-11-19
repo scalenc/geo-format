@@ -98,7 +98,7 @@ export class SvgWriter {
     const contours = this.writeContours(part, part.contours);
     const bendings = this.writeBendings(part, part.bendings);
     const copies = part.copies.map((copy) => this.writePartCopy(part, copy)).join('');
-    return `<g id="${part.name}">${elements}${contours}${bendings}</g>${copies}`;
+    return `<g id="${part.name}">${contours}${elements}${bendings}</g>${copies}`;
   }
 
   private writeContours(part: IPart, contours: Contour[]) {
@@ -228,10 +228,17 @@ export class SvgWriter {
     const anchor =
       element.textAlignment & TextAlignment.HORIZONTAL_CENTER ? 'middle' : element.textAlignment & TextAlignment.HORIZONTAL_RIGHT ? 'end' : 'start';
     const baseline = element.textAlignment & TextAlignment.VERTICAL_CENTER ? 'middle' : element.textAlignment & TextAlignment.VERTICAL_TOP ? 'hanging' : 'auto';
+
     const text = element.text.join('\n');
-    return `<text x="${
-      p1.x
-    }" y="${-p1.y}" text-anchor="${anchor}" dominant-baseline="${baseline}" font-size="${size}" font-family="serif"><![CDATA[${text}]]></text>`;
+    const color = `fill="${this.colorPallet[element.color]}" stroke="none"`;
+
+    const charAngle = element.charAngle ? `rotate="${element.charAngle}""` : '';
+    const font = `font-size="${size}" font-family="serif"${charAngle}`;
+
+    const transform = element.textAngle ? ` transform="rotate(${element.textAngle} ${p1.x} ${-p1.y})"` : '';
+    const placement = `x="${p1.x}" y="${-p1.y}"${transform} text-anchor="${anchor}" dominant-baseline="${baseline}"`;
+
+    return `<text ${placement} ${color} ${font}><![CDATA[${text}]]></text>`;
   }
 
   private writePartCopy(part: Part, copy: PartCopy) {
