@@ -1,30 +1,37 @@
 image: node:latest
 
 stages:
-  - build
+  - test
+  - tag
   - publish
 
-build:
-  stage: build
+test:
+  stage: test
+  except:
+    - tags
   script:
     - yarn
     - yarn lint
     - yarn build
     - yarn coverage # includes yarn test
-  artifacts:
-    reports:
-      cobertura: coverage/cobertura-coverage.xml
+
+tag:
+  stage: tag
+  only:
+    - master
+  script:
+    - npx semantic-release
 
 publish:
   stage: publish
   only:
-    refs:
-      - master
+    - tags
   script:
     - |
       {
         echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
         echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
       } | tee --append .npmrc
+    - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
     - yarn
     - yarn publish
