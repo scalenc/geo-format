@@ -5,8 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "prepare": "husky install",
     "lint": "eslint .",
-    "test": "mocha -r ts-node/register tests/*.test.ts --exit",
+    "test": "mocha",
     "coverage": "nyc --reporter lcov --reporter text yarn test",
     "build": "tsc",
     "prepublish": "tsc"
