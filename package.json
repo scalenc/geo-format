@@ -12,6 +12,19 @@
     "build": "tsc",
     "prepublish": "tsc"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scalenc/geo-format.git"
+  },
+  "keywords": [
+    "geo",
+    "TRUMPF"
+  ],
+  "author": "scalenc",
+  "bugs": {
+    "url": "https://github.com/scalenc/geo-format/issues"
+  },
+  "homepage": "https://github.com/scalenc/geo-format",
   "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.2.11",
