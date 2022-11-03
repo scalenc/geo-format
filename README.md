@@ -1,4 +1,7 @@
-# geo-format
+# TRUMPF GEO file format
+
+[![License](https://img.shields.io/badge/license-BSD3-green)](https://github.com/scalenc/lst-format)
+[![NPM version](https://img.shields.io/npm/v/@scalenc/lst-format)](https://www.npmjs.com/package/@scalenc/lst-format)
 
 This is a typescript library to read text in TRUMPF GEO file format.
 
@@ -6,41 +9,40 @@ It comes with a plain class model of the GEO file and a persistency layer to rea
 
 Additionally, it provides a SVG writer to output the GEO class model into a SVG string.
 
-## Usage
+## Installation
 
-This package is deployed to the gitlab npm package repository. You need to configure this repository within your project.
-Therefore, create a local `.npmrc` file (to be checked in - also good for `yarn`):
-
+```sh
+npm install lst-format
+yarn add lst-format
+pnpm add lst-format
 ```
-@scalenc:registry=https://gitlab.com/api/v4/packages/npm/
-```
 
-You need authentication to the gitlab npm package repository. Therefore, you need to create a personal access token (see https://gitlab.com/-/profile/personal_access_tokens).
-Then, create a `.npmrc` file in your home directory (do not check in):
+## Examples
 
-```
-//gitlab.com/api/v4/packages/npm/:_authToken=<your personal access token>
-//gitlab.com/api/v4/projects/:_authToken=<your personal access token>
+Sample usage to read TRUMPF GEO file
+
+```typescript
+import { GeoReader, SvgWriter } from '@scalenc/geo-format';
+
+const geo =
+  '#~1\n1.03\n0\n\n0.000000000 0.000000000 0.000000000\n724.264068712 848.528137424 0.000000000\n294860.320115468\n0\n0.000000000\n0\n1\n##~~\n#~11\n\n\n\n\n\n\n0.000000000\n\n\n\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n##~~\n#~END\n#~3\n\n\n\n0.000000000 0.000000000 1.000000000\n1.000000000 0.000000000 0.000000000 0.000000000\n0.000000000 1.000000000 0.000000000 0.000000000\n0.000000000 0.000000000 1.000000000 0.000000000\n0.000000000 0.000000000 0.000000000 1.000000000\n0.000000000 0.000000000 0.000000000\n724.264068712 848.528137424 0.000000000\n275.546406035 424.264068712 0.000000000\n294860.320115468\n1\n0\n0\n0\n0\n##~~\n#~30\nIDENT@\n#~TTINFO_END\n#~31\nP\n1\n0.000000000 424.264068712 0.000000000\n|~\nP\n4\n308.036302695 424.264068712 0.000000000\n|~\nP\n3\n424.264068712 424.264068712 0.000000000\n|~\nP\n5\n624.264068712 424.264068712 0.000000000\n|~\nP\n2\n724.264068712 124.264068712 0.000000000\n|~\nP\n6\n724.264068712 724.264068712 0.000000000\n|~\n##~~\n#~33\n\n1 24 0\n0\n0.000000000 0.000000000 1.000000000\n0.000000000 0.000000000 0.000000000\n724.264068712 848.528137424 0.000000000\n275.546406035 424.264068712 0.000000000\n294860.320115468\n0\n##~~\n#~331\nARC\n1 0\n3 1 2\n1\n|~\nARC\n1 0\n5 2 4\n-1\n|~\nARC\n1 0\n5 4 6\n-1\n|~\nARC\n1 0\n3 6 1\n1\n|~\n##~~\n#~KONT_END\n#~END\n#~EOF\n';
+const file = GeoReader.read(geo);
+const svg = new SvgWriter().toSvg(file);
+console.log(svg);
 ```
 
 ## Development
 
-### Setup
-
-Run `yarn` to install all dependencies.
-
-### Test
+Run `yarn` to setup project and install all dependencies.
 
 Run `yarn test` to run all tests.
 
-### Linting
-
-Run `yarn run lint` to check for linting issues.
-
-### Build
+Run `yarn lint` to check for linting issues.
 
 Run `yarn build` to build.
 
 ## License
 
 All rights reserved to ScaleNC GmbH.
+
+Source Code and Binaries licensed under BSD-3-Clause.

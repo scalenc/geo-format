@@ -7,9 +7,6 @@ describe('test GeoReader', () => {
   const sampleFiles = [
     '300T16.geo',
     '300T80X100.geo',
-    '554.geo',
-    '555.geo',
-    '556.geo',
     'geo_with_bend_attributes.geo',
     'moon_withSortedPoints.geo',
     'moon.geo',

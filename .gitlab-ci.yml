@@ -22,7 +22,19 @@ tag:
   script:
     - npx semantic-release
 
-publish:
+publish-to-npm:
+  stage: publish
+  only:
+    - tags
+  before_script:
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  script:
+    - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+    - 'sed -i "/^[ ]*\"prepare\": \".*\",$/d" package.json'
+    - yarn
+    - yarn publish --access public
+
+publish-to-gitlab:
   stage: publish
   only:
     - tags
@@ -33,5 +45,6 @@ publish:
         echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
       } | tee --append .npmrc
     - 'sed -ie "s/\"version\":[ ]*\"[^\"]*\"/\"version\": \"`git describe --tags | tr -d v`\"/g" package.json'
+    - 'sed -i "/^[ ]*\"prepare\": \".*\",$/d" package.json'
     - yarn
     - yarn publish
