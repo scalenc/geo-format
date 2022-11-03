@@ -1,7 +1,7 @@
 # TRUMPF GEO file format
 
-[![License](https://img.shields.io/badge/license-BSD3-green)](https://github.com/scalenc/lst-format)
-[![NPM version](https://img.shields.io/npm/v/@scalenc/lst-format)](https://www.npmjs.com/package/@scalenc/lst-format)
+[![License](https://img.shields.io/badge/license-BSD3-green)](https://github.com/scalenc/geo-format)
+[![NPM version](https://img.shields.io/npm/v/@scalenc/geo-format)](https://www.npmjs.com/package/@scalenc/geo-format)
 
 This is a typescript library to read text in TRUMPF GEO file format.
 
@@ -12,9 +12,9 @@ Additionally, it provides a SVG writer to output the GEO class model into a SVG 
 ## Installation
 
 ```sh
-npm install lst-format
-yarn add lst-format
-pnpm add lst-format
+npm install @scalenc/geo-format
+yarn add @scalenc/geo-format
+pnpm add @scalenc/geo-format
 ```
 
 ## Examples
