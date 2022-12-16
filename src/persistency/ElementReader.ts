@@ -171,6 +171,9 @@ export class ElementReader {
       text.push(this.parser.readTextLine());
     }
 
+    // Skip empty line which might be introduced by Design for text with attributes?
+    if (this.parser.isCurrentLineEnd) this.parser.readNewLine();
+
     return {
       ...elementCommons,
       startPointIndex,
