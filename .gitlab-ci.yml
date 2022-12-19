@@ -20,7 +20,7 @@ tag:
   only:
     - master
   script:
-    - npx semantic-release
+    - npx semantic-release --repository-url `git remote get-url origin`
 
 publish-to-npm:
   stage: publish

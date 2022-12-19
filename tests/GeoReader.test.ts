@@ -13,6 +13,7 @@ describe('test GeoReader', () => {
     'Test_withSortedPoints.geo',
     'Test.geo',
     'Text_Geo.geo',
+    'Text_GeoWithAttribute.geo',
     'Z_CAMEL.geo',
   ];
 

@@ -23,8 +23,12 @@ export class Parser {
     return this.current === constants.ELEMENT_END_CHAR;
   }
 
+  get isCurrentLineEnd(): boolean {
+    return this.current === '\r' || this.current === '\n';
+  }
+
   public readNewLine(): void {
-    if (this.isCurrentLineEnd()) {
+    if (this.isCurrentLineEnd) {
       this.readNextByte();
     } else {
       const line = this.readText();
@@ -34,10 +38,10 @@ export class Parser {
 
   public readText(): string {
     const startIndex = this.index;
-    while (!this.isCurrentLineEnd()) {
+    while (!this.isCurrentLineEnd) {
       this.readNextByte();
     }
-    return this.text.substr(startIndex, this.index - startIndex);
+    return this.text.substring(startIndex, this.index);
   }
 
   public readTextLine(): string {
@@ -141,7 +145,7 @@ export class Parser {
   }
 
   public skipWhiteSpace(): void {
-    while (!this.isCurrentLineEnd() && this.isWhiteSpace()) {
+    while (!this.isCurrentLineEnd && this.isWhiteSpace()) {
       this.readNextByte();
     }
   }
@@ -160,20 +164,15 @@ export class Parser {
     return /\s/.test(this.current); // FIXME Optimize
   }
 
-  private isCurrentLineEnd(): boolean {
-    return this.current === '\r' || this.current === '\n';
-  }
-
   private readNextByte() {
-    this.index += 1;
-
-    if (this.isCurrentLineEnd()) {
-      if (this.text[this.index - 1] === '\r' && this.current === '\n') {
-        this.index += 1;
+    if (this.isCurrentLineEnd) {
+      if (this.current === '\r' && this.index + 1 < this.text.length && this.text[this.index + 1] === '\n') {
+        ++this.index;
       }
-      this.line += 1;
+      ++this.line;
     }
 
+    ++this.index;
     this.assertNotEOF();
   }
 
