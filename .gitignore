@@ -21,3 +21,4 @@ dump/
 dist/
 
 *.log
+/.idea/

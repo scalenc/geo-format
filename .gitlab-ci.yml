@@ -1,4 +1,4 @@
-image: node:latest
+image: node:18
 
 stages:
   - test
@@ -20,7 +20,7 @@ tag:
   only:
     - master
   script:
-    - npx semantic-release --repository-url `git remote get-url origin`
+    - npx semantic-release@20 --repository-url `git remote get-url origin`
 
 publish-to-npm:
   stage: publish
