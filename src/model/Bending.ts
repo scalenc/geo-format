@@ -1,6 +1,7 @@
 import { Element } from './Element';
 
 export interface Bending {
+  id?: string;
   type: number;
   method: number;
   technique: number;

@@ -9,15 +9,15 @@ export class SubpartReader {
   // eslint-disable-next-line no-useless-constructor
   public constructor(private parser: Parser) {}
 
-  public read(): Subpart {
-    const subpart = this.readDetails();
+  public read(id?: string): Subpart {
+    const subpart = this.readDetails(id);
 
     for (;;) {
-      const section = this.parser.readSectionStartLine();
+      const [section, id] = this.parser.readSectionStartLine();
       if (section === constants.PART_POINTS_SECTION) {
         this.readPoints(subpart);
       } else if (section === constants.PART_CONTOUR_SECTION) {
-        this.readContours(subpart);
+        this.readContours(subpart, id);
       } else if (section === constants.PART_ELEMENT_SECTION) {
         this.readElements(subpart);
       } else if (section === constants.PART_BENDING_SECTION) {
@@ -31,7 +31,7 @@ export class SubpartReader {
     return subpart;
   }
 
-  private readDetails(): Subpart {
+  private readDetails(id?: string): Subpart {
     const name = this.parser.readTextLine();
     const info = this.parser.readTextLine();
     const number = this.parser.readTextLine();
@@ -42,6 +42,7 @@ export class SubpartReader {
     const contoursCount = this.parser.readIntLine();
     this.parser.readExpectedSectionEndLine(constants.PART_SUBPART_SECTION_END);
     return {
+      id,
       name,
       info,
       number,
@@ -62,9 +63,9 @@ export class SubpartReader {
     subpart.points = PointReader.readPoints(this.parser);
   }
 
-  private readContours(subpart: Subpart) {
+  private readContours(subpart: Subpart, id: string) {
     const contourReader = new ContourReader(this.parser);
-    subpart.contours.push(contourReader.read());
+    subpart.contours.push(contourReader.read(id));
   }
 
   private readElements(subpart: Subpart) {

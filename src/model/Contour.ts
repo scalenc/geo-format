@@ -13,6 +13,7 @@ export enum ContourInnerType {
 }
 
 export interface Contour {
+  id?: string;
   info: string;
   number: number;
   type: number;
@@ -26,4 +27,6 @@ export interface Contour {
   parentContourNumber: number;
   segments: Element[];
   offsetSegments: Element[];
+  indices: number[];
+  offsetSegmentLinks: number[];
 }

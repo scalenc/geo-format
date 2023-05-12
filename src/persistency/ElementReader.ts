@@ -49,11 +49,11 @@ export class ElementReader {
   }
 
   private readCommons(): Element {
-    const type = this.parser.readTokenLine() as ElementType;
+    const [type, id] = this.parser.readTokenLineWithOptionalId();
     const color = this.parser.readInt();
     this.parser.skipWhiteSpace();
     const stroke = this.parser.readIntLine();
-    return { type, color, stroke };
+    return { id, type: type as ElementType, color, stroke };
   }
 
   private readLine(elementCommons: Element): LineSegment {

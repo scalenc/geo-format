@@ -3,6 +3,7 @@ import { Element } from './Element';
 import { Vector } from './Vector';
 
 export interface Subpart {
+  id?: string;
   name: string;
   info: string;
   number: string;

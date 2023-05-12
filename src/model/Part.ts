@@ -8,6 +8,7 @@ import { Subpart } from './Subpart';
 import { Vector } from './Vector';
 
 export interface Part {
+  id?: string;
   name: string;
   info: string;
   processingRule: string;

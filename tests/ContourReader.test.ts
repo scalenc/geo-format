@@ -5,6 +5,7 @@ import { Parser } from '../src/persistency/Parser';
 
 describe('test ContourReader', () => {
   const SAMPLE_CONTOUR = {
+    id: undefined,
     info: 'Info',
     number: 1,
     type: 2,
@@ -18,6 +19,8 @@ describe('test ContourReader', () => {
     parentContourNumber: -1,
     segments: [],
     offsetSegments: [],
+    indices: [],
+    offsetSegmentLinks: [],
   } as Contour;
 
   [

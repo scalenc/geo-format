@@ -6,7 +6,7 @@ export class HeaderReader {
   // eslint-disable-next-line no-useless-constructor
   public constructor(private parser: Parser) {}
 
-  public read(): Header {
+  public read(id?: string): Header {
     const version = this.parser.readTextLine();
     this.parser.assert(VERSIONS.includes(version), `Unknown GEO version ${version}`);
 
@@ -21,9 +21,9 @@ export class HeaderReader {
     const partsCount = this.parser.readIntLine();
     this.parser.readExpectedSectionEndLine(constants.SECTION_END);
 
-    const header = { version, revision, date, min, max, area, unit, tolerance, is3D, partsCount } as Header;
+    const header = { id, version, revision, date, min, max, area, unit, tolerance, is3D, partsCount } as Header;
 
-    let section = this.parser.readTokenLine();
+    let [section] = this.parser.readTokenLineWithOptionalId();
     if (section === constants.SUBHEADER_SECTION) {
       this.readDetails(header);
       this.parser.readExpectedSectionEndLine(constants.SECTION_END);

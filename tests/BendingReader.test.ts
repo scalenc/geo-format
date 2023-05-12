@@ -5,6 +5,7 @@ import { BendingReader } from '../src/persistency/BendingReader';
 import { Parser } from '../src/persistency/Parser';
 
 const SAMPLE_BENDING = {
+  id: undefined,
   type: 1,
   method: 2,
   technique: 3,
@@ -55,6 +56,7 @@ describe('test BendingReader', () => {
         ...SAMPLE_BENDING,
         bendingLines: [
           {
+            id: '',
             type: 'LIN',
             color: 1,
             stroke: 0,

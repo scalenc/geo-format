@@ -6,6 +6,7 @@ import { SubpartReader } from '../src/persistency/SubpartReader';
 describe('test SubpartReader', () => {
   const SAMPLE_SUBPART_TEXT = 'MyName\nMyInfo\nMyNumber\n0.0 0.0 0.0\n10.0 11.0 12.0\n5.0 4.0 0.0\n90.0\n3\n##~~\n';
   const SAMPLE_SUBPART = {
+    id: undefined,
     name: 'MyName',
     info: 'MyInfo',
     number: 'MyNumber',

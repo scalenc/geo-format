@@ -22,6 +22,7 @@ RuleName
 4
 `;
   const SAMPLE_PART = {
+    id: undefined,
     name: 'MyName',
     info: 'MyInfo',
     processingRule: 'RuleName',
@@ -81,6 +82,7 @@ RuleName
         ...SAMPLE_PART,
         copies: [
           {
+            id: '',
             info: 'Kopie',
             number: 1,
             transformation: {
