@@ -94,11 +94,12 @@ export class SvgWriter {
   }
 
   private writePart(part: Part) {
+    const transform = SvgWriter.is2dIdentityTransform(part.transformation) ? '' : ` transform="${this.writeTransform(part.transformation)}"`;
     const elements = this.writeElements(part, part.elements);
     const contours = this.writeContours(part, part.contours);
     const bendings = this.writeBendings(part, part.bendings);
     const copies = part.copies.map((copy) => this.writePartCopy(part, copy)).join('');
-    return `<g id="${part.name}">${contours}${elements}${bendings}</g>${copies}`;
+    return `<g id="${part.name}"${transform}>${contours}${elements}${bendings}</g>${copies}`;
   }
 
   private writeContours(part: IPart, contours: Contour[]) {
@@ -107,7 +108,12 @@ export class SvgWriter {
     const path = contourFragments.length
       ? `<path fill="${this.colorPallet[ElementColor.BLACK]}" stroke="${this.colorPallet[ElementColor.WHITE]}" d="${contourFragments.join(' ')}" />`
       : '';
-    return `${path}${this.writeElements(part, nonPathElements)}`;
+    const elements = this.writeElements(part, nonPathElements);
+    const offsetSegments = this.writeElements(
+      part,
+      contours.flatMap((c) => c.offsetSegments)
+    );
+    return `${path}${elements}${offsetSegments}`;
   }
 
   private writeContourFragment(part: IPart, contour: Contour, nonPathElements: Element[]) {
@@ -245,9 +251,14 @@ export class SvgWriter {
     return `<use href="#${part.name}" transform="${this.writeTransform(copy.transformation)}" />`;
   }
 
+  private static is2dIdentityTransform(matrix: Matrix): boolean {
+    const m = matrix.values;
+    return m[0][0] === 1 && m[1][0] === 0 && m[0][1] === 0 && m[1][1] === 1 && m[3][0] === 0 && m[3][1] === 0;
+  }
+
   private writeTransform(matrix: Matrix) {
     const m = matrix.values;
-    return `matrix(${m[0][0]}, ${-m[1][0]}, ${-m[0][1]}, ${m[1][1]}, ${m[3][0]}, ${-m[3][1]})`; // FIXME correct?
+    return `matrix(${m[0][0]}, ${m[1][0]}, ${m[0][1]}, ${m[1][1]}, ${m[3][0]}, ${-m[3][1]})`;
   }
 
   private writeStroke(element: Element) {
