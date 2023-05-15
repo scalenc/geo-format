@@ -42,6 +42,7 @@ export enum ElementStroke {
 }
 
 export interface Element {
+  id?: string;
   type: ElementType;
   color: ElementColor;
   stroke: ElementStroke;

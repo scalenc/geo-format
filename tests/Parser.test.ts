@@ -234,13 +234,14 @@ describe('tests Parser', () => {
   });
 
   [
-    { text: '#~1\n...', expected: '1' },
-    { text: '#~11 \n...', expected: '11' },
+    { text: '#~1\n...', expected: ['1', ''] },
+    { text: '#~11 \n...', expected: ['11', ''] },
+    { text: '#~11 0p123123123\n...', expected: ['11', '0p123123123'] },
   ].forEach((test) => {
     it(`should readSectionStartLine for ${JSON.stringify(test.text)}`, () => {
       const parser = new Parser(test.text);
       const actual = parser.readSectionStartLine();
-      expect(test.expected).to.eq(actual);
+      expect(test.expected).to.deep.eq(actual);
     });
   });
 

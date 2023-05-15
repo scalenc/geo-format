@@ -44,6 +44,7 @@ describe('test HeaderReader', () => {
     const reader = new HeaderReader(new Parser(makeValidHeaderText(VERSIONS.V1_03)));
     const header = reader.read();
     expect(header).to.eql({
+      id: undefined,
       area: 74166.69374497,
       assemblyName: '',
       author: '',

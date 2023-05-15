@@ -115,6 +115,15 @@ export class Parser {
     return this.text.substring(startIndex, this.index);
   }
 
+  public readTokenLineWithOptionalId(): [string, string] {
+    const v = this.readToken();
+    this.skipWhiteSpace();
+    const id = this.readToken();
+    this.skipWhiteSpace();
+    this.readNewLine();
+    return [v, id];
+  }
+
   public readTokenLine(): string {
     const v = this.readToken();
     this.skipWhiteSpace();
@@ -132,16 +141,17 @@ export class Parser {
     this.readNewLine();
   }
 
-  public readSectionStartLine(): string {
+  public readSectionStartLine(): [string, string] {
     this.skipExpected(constants.SECTION_TOKEN, 'section start');
 
-    const section = this.readTokenLine();
-    return section;
+    const sectionWithId = this.readTokenLineWithOptionalId();
+    return sectionWithId;
   }
 
-  public readExpectedSectionStartLine(expectedSection: string): void {
-    const section = this.readSectionStartLine();
-    this.assert(expectedSection === section, `Expect section "${expectedSection}", but found "${section}"`);
+  public readExpectedSectionStartLine(expectedSection: string): [string, string] {
+    const sectionWithId = this.readSectionStartLine();
+    this.assert(expectedSection === sectionWithId[0], `Expect section "${expectedSection}", but found "${sectionWithId[0]}"`);
+    return sectionWithId;
   }
 
   public skipWhiteSpace(): void {

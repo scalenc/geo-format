@@ -8,9 +8,9 @@ export class GeoReader {
   public static read(content: string): GeoFile {
     const parser = new Parser(content);
 
-    parser.readExpectedSectionStartLine(constants.HEADER_SECTION);
+    const [, id] = parser.readExpectedSectionStartLine(constants.HEADER_SECTION);
     const headerReader = new HeaderReader(parser);
-    const header = headerReader.read();
+    const header = headerReader.read(id);
 
     const partReader = new PartReader(parser);
     const parts = [];
@@ -19,9 +19,12 @@ export class GeoReader {
       if (section === constants.FILE_END) {
         break;
       }
+      parser.skipWhiteSpace();
+      const id = parser.readToken();
+      parser.skipWhiteSpace();
       parser.readNewLine();
 
-      parts.push(partReader.read());
+      parts.push(partReader.read(id));
     }
 
     return { header, parts };

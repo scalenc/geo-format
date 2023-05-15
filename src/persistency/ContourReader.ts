@@ -10,7 +10,7 @@ export class ContourReader {
     this.elementReader = new ElementReader(parser);
   }
 
-  public read(): Contour {
+  public read(id?: string): Contour {
     const info = this.parser.readTextLine();
 
     const number = this.parser.readInt();
@@ -33,18 +33,25 @@ export class ContourReader {
 
     const segments = [];
     const offsetSegments = [];
+    const indices: number[] = [];
+    const offsetSegmentLinks: number[] = [];
     for (;;) {
-      const section = this.parser.readSectionStartLine();
+      const [section] = this.parser.readSectionStartLine();
       if (section === constants.PART_CONTOUR_ELEMENT_SECTION) {
         segments.push(...this.elementReader.readList());
       } else if (section === constants.PART_CONTOUR_OFFSET_ELEMENT_SECTION) {
         offsetSegments.push(...this.elementReader.readList());
+      } else if (section === constants.PART_CONTOUR_INDICES_SECTION) {
+        indices.push(...this.readListOfInts());
+      } else if (section === constants.PART_CONTOUR_OFFSET_ELEMENT_LINKS_SECTION) {
+        offsetSegmentLinks.push(...this.readListOfInts());
       } else {
         this.parser.assertSectionEnd(constants.PART_CONTOUR_BLOCK_END, section);
         break;
       }
     }
     return {
+      id,
       info,
       number,
       type,
@@ -58,6 +65,17 @@ export class ContourReader {
       parentContourNumber,
       segments,
       offsetSegments,
+      indices,
+      offsetSegmentLinks,
     };
+  }
+
+  private readListOfInts(): number[] {
+    const entries: number[] = [];
+    while (!this.parser.isSectionChar) {
+      entries.push(this.parser.readIntLine());
+    }
+    this.parser.readExpectedSectionEndLine(constants.PART_ELEMENT_SECTION_END);
+    return entries;
   }
 }

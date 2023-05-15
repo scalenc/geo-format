@@ -19,6 +19,7 @@ export const VERSIONS = {
 };
 
 export interface Header {
+  id?: string;
   version: string;
   revision: number;
   date: string;

@@ -7,7 +7,7 @@ import { ConstructionLineElement } from '../src/model/ConstructionLineElement';
 import { LineSegment } from '../src/model/LineSegment';
 import { PointElement } from '../src/model/PointElement';
 import { QuadElement } from '../src/model/QuadElement';
-import { TextElement } from '../src/model/TextElement';
+import { TextAlignment, TextElement } from '../src/model/TextElement';
 import { ElementReader } from '../src/persistency/ElementReader';
 import { Parser } from '../src/persistency/Parser';
 
@@ -23,15 +23,16 @@ describe('test ElementReader', () => {
     /* tslint:disable */
     {
       text: 'LIN\n1 0\n2 1\n|~\n...',
-      expect: { type: 'LIN', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: false, attributes: undefined } as LineSegment,
+      expect: { id: '', type: 'LIN', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: false, attributes: undefined } as LineSegment,
     },
     {
       text: 'CHA\n1 0\n2 1\n|~\n...',
-      expect: { type: 'CHA', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: true, attributes: undefined } as LineSegment,
+      expect: { id: '', type: 'CHA', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: true, attributes: undefined } as LineSegment,
     },
     {
       text: 'ARC\n1 0\n13 14 15\n1\n|~\n...',
       expect: {
+        id: '',
         type: 'ARC',
         color: 1,
         stroke: 0,
@@ -46,6 +47,7 @@ describe('test ElementReader', () => {
     {
       text: 'FIL\n1 0\n13 14 15\n1\n|~\n...',
       expect: {
+        id: '',
         type: 'FIL',
         color: 1,
         stroke: 0,
@@ -59,20 +61,31 @@ describe('test ElementReader', () => {
     },
     {
       text: 'CIR\n1 0\n13\n0.123\n|~\n...',
-      expect: { type: 'CIR', color: 1, stroke: 0, centerPointIndex: 13, radius: 0.123, attributes: undefined } as CircleElement,
+      expect: { id: '', type: 'CIR', color: 1, stroke: 0, centerPointIndex: 13, radius: 0.123, attributes: undefined } as CircleElement,
     },
     {
       text: 'CCIR\n1 0\n13\n0.123\n|~\n...',
-      expect: { type: 'CCIR', color: 1, stroke: 0, centerPointIndex: 13, radius: 0.123, attributes: undefined } as ConstructionCircleElement,
+      expect: { id: '', type: 'CCIR', color: 1, stroke: 0, centerPointIndex: 13, radius: 0.123, attributes: undefined } as ConstructionCircleElement,
     },
-    { text: 'PKT\n1 0\n13\n|~\n...', expect: { type: 'PKT', color: 1, stroke: 0, pointIndex: 13, attributes: undefined } as PointElement },
+    { text: 'PKT\n1 0\n13\n|~\n...', expect: { id: '', type: 'PKT', color: 1, stroke: 0, pointIndex: 13, attributes: undefined } as PointElement },
     {
       text: 'CLIN\n1 0\n13\n0.1 0.2 0.3\n|~\n...',
-      expect: { type: 'CLIN', color: 1, stroke: 0, pointIndex: 13, xSlope: 0.1, ySlope: 0.2, offset: 0.3, attributes: undefined } as ConstructionLineElement,
+      expect: {
+        id: '',
+        type: 'CLIN',
+        color: 1,
+        stroke: 0,
+        pointIndex: 13,
+        xSlope: 0.1,
+        ySlope: 0.2,
+        offset: 0.3,
+        attributes: undefined,
+      } as ConstructionLineElement,
     },
     {
       text: 'LED\n1 0\n13 14\n1.0 2.3\n|~\n...',
       expect: {
+        id: '',
         type: 'LED',
         color: 1,
         stroke: 0,
@@ -86,6 +99,7 @@ describe('test ElementReader', () => {
     {
       text: 'QUAD\n1 0\n13 14 15 16\n1 2\n|~\n...',
       expect: {
+        id: '',
         type: 'QUAD',
         color: 1,
         stroke: 0,
@@ -101,6 +115,7 @@ describe('test ElementReader', () => {
     {
       text: 'TXT\n1 0\n13\n10.0 1.3 90.0\n1.5 45.0\n36 1 3\nText1\nHello\nWorld!\n|~\n...',
       expect: {
+        id: '',
         type: 'TXT',
         color: 1,
         stroke: 0,
@@ -110,7 +125,7 @@ describe('test ElementReader', () => {
         charAngle: 90.0,
         lineSeparation: 1.5,
         textAngle: 45.0,
-        textAlignment: 36,
+        textAlignment: 36 as TextAlignment,
         textOrientation: 1,
         text: ['Text1', 'Hello', 'World!'],
         attributes: undefined,
@@ -118,7 +133,7 @@ describe('test ElementReader', () => {
     },
     {
       text: 'LIN\n1 0\n2 1\n3\n1\n2\n3\n|~\n...',
-      expect: { type: 'LIN', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: false, attributes: [1, 2, 3] } as LineSegment,
+      expect: { id: '', type: 'LIN', color: 1, stroke: 0, startPointIndex: 2, endPointIndex: 1, isChamfer: false, attributes: [1, 2, 3] } as LineSegment,
     },
     /* tslint:enable */
   ].forEach((test) => {

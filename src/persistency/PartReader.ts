@@ -12,29 +12,29 @@ export class PartReader {
   // eslint-disable-next-line no-useless-constructor
   public constructor(private parser: Parser) {}
 
-  public read(): Part {
-    const part = this.readDetails();
+  public read(id?: string): Part {
+    const part = this.readDetails(id);
 
     for (;;) {
-      const section = this.parser.readSectionStartLine();
+      const [section, id] = this.parser.readSectionStartLine();
       switch (section) {
         case constants.PART_POINTS_SECTION:
           this.readPoints(part);
           break;
         case constants.PART_CONTOUR_SECTION:
-          this.readContours(part);
+          this.readContours(part, id);
           break;
         case constants.PART_ELEMENT_SECTION:
           this.readElements(part);
           break;
         case constants.PART_COPIES_SECTION:
-          this.readCopies(part);
+          this.readCopies(part, id);
           break;
         case constants.PART_SUBPART_SECTION:
-          this.readSubparts(part);
+          this.readSubparts(part, id);
           break;
         case constants.PART_BENDING_SECTION:
-          this.readBendings(part);
+          this.readBendings(part, id);
           break;
         case constants.PART_ATTRIBUTE_SECTION:
           this.readPartAttributes(part);
@@ -52,7 +52,7 @@ export class PartReader {
     }
   }
 
-  readDetails(): Part {
+  readDetails(id?: string): Part {
     const name = this.parser.readTextLine();
     const info = this.parser.readTextLine();
     const processingRule = this.parser.readTextLine();
@@ -75,6 +75,7 @@ export class PartReader {
 
     this.parser.readExpectedSectionEndLine(constants.SECTION_END);
     return {
+      id,
       name,
       info,
       processingRule,
@@ -106,9 +107,9 @@ export class PartReader {
     part.points = PointReader.readPoints(this.parser);
   }
 
-  private readContours(part: Part) {
+  private readContours(part: Part, id: string) {
     const contourReader = new ContourReader(this.parser);
-    part.contours.push(contourReader.read());
+    part.contours.push(contourReader.read(id));
   }
 
   private readElements(part: Part) {
@@ -117,7 +118,7 @@ export class PartReader {
     part.elements = elementReader.readList();
   }
 
-  private readCopies(part: Part) {
+  private readCopies(part: Part, id: string) {
     const info = this.parser.readTextLine();
     const number = this.parser.readIntLine();
     const transformation = this.parser.readMatrixLines();
@@ -125,19 +126,19 @@ export class PartReader {
     this.parser.readExpectedTokenLine(constants.PART_COPIES_ATTRIBUTE_START, 'section start');
     const attributes = this.readPartOrPartCopyNamedAttributes(constants.PART_COPIES_ATTRIBUTE_END);
 
-    part.copies.push({ info, number, transformation, attributes });
+    part.copies.push({ id, info, number, transformation, attributes });
 
     this.parser.readExpectedSectionEndLine(constants.PART_COPIES_SECTION_END);
   }
 
-  private readSubparts(part: Part) {
+  private readSubparts(part: Part, id: string) {
     const subpartReader = new SubpartReader(this.parser);
-    part.subparts.push(subpartReader.read());
+    part.subparts.push(subpartReader.read(id));
   }
 
-  private readBendings(part: Part) {
+  private readBendings(part: Part, id: string) {
     const bendingReader = new BendingReader(this.parser);
-    part.bendings.push(bendingReader.read());
+    part.bendings.push(bendingReader.read(id));
   }
 
   private readPartAttributes(part: Part) {

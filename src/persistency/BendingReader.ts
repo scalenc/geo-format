@@ -10,7 +10,7 @@ export class BendingReader {
     this.elementReader = new ElementReader(parser);
   }
 
-  public read(): Bending {
+  public read(id?: string): Bending {
     const type = this.parser.readInt();
     this.parser.skipWhiteSpace();
     const method = this.parser.readInt();
@@ -36,7 +36,7 @@ export class BendingReader {
 
     const bendingLines = [];
     for (;;) {
-      const section = this.parser.readSectionStartLine();
+      const [section] = this.parser.readSectionStartLine();
       if (section === constants.PART_BENDING_ELEMENT_SECTION) {
         bendingLines.push(...this.elementReader.readList());
       } else {
@@ -46,6 +46,7 @@ export class BendingReader {
     }
 
     return {
+      id,
       type,
       method,
       technique,
