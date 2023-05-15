@@ -16,6 +16,7 @@ describe('test SvgWriter', () => {
     'Text_Geo.geo',
     'Z_CAMEL.geo',
     '123456-A1-12345-123-12Stk.geo',
+    'tmt-extract.geo',
   ];
 
   sampleFiles.forEach((filename) => {
