@@ -68,8 +68,9 @@ export class SvgWriter {
     const viewPort = `viewBox="${min.x - padding} ${-max.y - padding} ${svgWidth + padding * 2} ${svgHeight + padding * 2}"`;
     const dimensions = options ? ` width="${options.targetWidth}" height="${options.targetHeight}"` : '';
     const globalGroup = `<g stroke="#000000" stroke-width="${svgStrokeWidth}" fill="none">`;
-    const parts = file.parts.map((p) => this.writePart(p)).join('');
-    return `<svg ${viewPort}${dimensions} xmlns="http://www.w3.org/2000/svg">${globalGroup}${pointSymbol}${parts}</g></svg>`;
+    const partDefs = file.parts.map((p, i) => this.writePartDef(p.name ? p : { ...p, name: `part${i + 1}` })).join('');
+    const partPos = file.parts.map((p, i) => this.writePartAndCopies(p.name ? p : { ...p, name: `part${i + 1}` })).join('');
+    return `<svg ${viewPort}${dimensions} xmlns="http://www.w3.org/2000/svg"><defs>${pointSymbol}${partDefs}</defs>${globalGroup}${partPos}</g></svg>`;
   }
 
   /**
@@ -93,13 +94,17 @@ export class SvgWriter {
     });
   }
 
-  private writePart(part: Part) {
-    const transform = SvgWriter.is2dIdentityTransform(part.transformation) ? '' : ` transform="${this.writeTransform(part.transformation)}"`;
+  private writePartDef(part: Part) {
     const elements = this.writeElements(part, part.elements);
     const contours = this.writeContours(part, part.contours);
     const bendings = this.writeBendings(part, part.bendings);
+    return `<g id="${part.name}">${contours}${elements}${bendings}</g>`;
+  }
+
+  private writePartAndCopies(part: Part) {
+    const transform = SvgWriter.is2dIdentityTransform(part.transformation) ? '' : ` transform="${this.writeTransform(part.transformation)}"`;
     const copies = part.copies.map((copy) => this.writePartCopy(part, copy)).join('');
-    return `<g id="${part.name}"${transform}>${contours}${elements}${bendings}</g>${copies}`;
+    return `<use href="#${part.name}"${transform} />${copies}`;
   }
 
   private writeContours(part: IPart, contours: Contour[]) {
@@ -142,7 +147,7 @@ export class SvgWriter {
 
   private static writePoint(part: IPart, element: PointElement) {
     const p = part.points[element.pointIndex];
-    return `<use id="point" x="${p.x}" y="${-p.y}" />`;
+    return `<use id="#point" x="${p.x}" y="${-p.y}" />`;
   }
 
   private writeLine(part: IPart, element: LineSegment) {
