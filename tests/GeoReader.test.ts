@@ -16,6 +16,7 @@ describe('test GeoReader', () => {
     'Text_GeoWithAttribute.geo',
     'Z_CAMEL.geo',
     'tmt-extract.geo',
+    'tmt-extract-2.geo',
   ];
 
   sampleFiles.forEach((filename) => {

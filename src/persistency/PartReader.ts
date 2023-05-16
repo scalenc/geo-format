@@ -123,12 +123,16 @@ export class PartReader {
     const number = this.parser.readIntLine();
     const transformation = this.parser.readMatrixLines();
 
-    this.parser.readExpectedTokenLine(constants.PART_COPIES_ATTRIBUTE_START, 'section start');
-    const attributes = this.readPartOrPartCopyNamedAttributes(constants.PART_COPIES_ATTRIBUTE_END);
+    let [token] = this.parser.readTokenLineWithOptionalId();
+    let attributes: { [key: string]: string } = {};
+    if (token === constants.PART_COPIES_ATTRIBUTE_START) {
+      attributes = this.readPartOrPartCopyNamedAttributes(constants.PART_COPIES_ATTRIBUTE_END);
+      token = this.parser.readTokenLine();
+    }
 
     part.copies.push({ id, info, number, transformation, attributes });
 
-    this.parser.readExpectedSectionEndLine(constants.PART_COPIES_SECTION_END);
+    this.parser.assertSectionEnd(constants.PART_COPIES_SECTION_END, token);
   }
 
   private readSubparts(part: Part, id: string) {
