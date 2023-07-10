@@ -3,7 +3,7 @@ import { Subpart } from '../src/model/Subpart';
 import { Parser } from '../src/persistency/Parser';
 import { SubpartReader } from '../src/persistency/SubpartReader';
 
-describe('test SubpartReader', () => {
+describe(SubpartReader.name, () => {
   const SAMPLE_SUBPART_TEXT = 'MyName\nMyInfo\nMyNumber\n0.0 0.0 0.0\n10.0 11.0 12.0\n5.0 4.0 0.0\n90.0\n3\n##~~\n';
   const SAMPLE_SUBPART = {
     id: undefined,

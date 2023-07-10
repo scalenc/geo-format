@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { Parser } from '../src/persistency/Parser';
 import { PointReader } from '../src/persistency/PointReader';
 
-describe('test PointReader', () => {
+describe(PointReader.name, () => {
   [
     {
       text: 'P\n1\n1.0 2.0 3.0\n|~\n##~~\n...',

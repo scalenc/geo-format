@@ -4,7 +4,7 @@ import path from 'path';
 import { GeoReader } from '../src/persistency/GeoReader';
 import { SvgWriter } from '../src/persistency/SvgWriter';
 
-describe('test SvgWriter', () => {
+describe(SvgWriter.name, () => {
   const sampleFiles = [
     '300T16.geo',
     '300T80X100.geo',

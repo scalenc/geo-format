@@ -30,6 +30,7 @@ export interface Header {
   tolerance: number;
   is3D: number;
   partsCount: number;
+  subHeaderId?: string;
   name?: string;
   description?: string;
   customer?: string;

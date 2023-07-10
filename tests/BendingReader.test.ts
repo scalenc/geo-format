@@ -20,7 +20,7 @@ const SAMPLE_BENDING = {
   bendingLines: [],
 } as Bending;
 
-describe('test BendingReader', () => {
+describe(BendingReader.name, () => {
   [
     { text: '1 2 3\n45.0 20.0\n2.0 3.0\n1.3\n1\n2\n1\n1\n2\n3\n##~~\n#~BIEG_END\n...', throws: /Expected section end/ },
     { text: '1 2 3\n45.0 20.0\n2.0 3.0\n1.3\n1\n2\n3\n1\n##~~\n#~BIEG_END\n...', throws: /Expected number/ },

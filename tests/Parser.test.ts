@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Parser } from '../src/persistency/Parser';
 
-describe('tests Parser', () => {
+describe(Parser.name, () => {
   ['\n...', '\r\n...'].forEach((s) => {
     it(`should readNewLine for ${JSON.stringify(s)} without throwing`, () => {
       const parser = new Parser(s);

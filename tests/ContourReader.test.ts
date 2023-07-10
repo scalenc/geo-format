@@ -3,7 +3,7 @@ import { Contour } from '../src/model/Contour';
 import { ContourReader } from '../src/persistency/ContourReader';
 import { Parser } from '../src/persistency/Parser';
 
-describe('test ContourReader', () => {
+describe(ContourReader.name, () => {
   const SAMPLE_CONTOUR = {
     id: undefined,
     info: 'Info',

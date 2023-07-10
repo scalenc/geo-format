@@ -4,7 +4,7 @@ import { PartCopy } from '../src/model/PartCopy';
 import { Parser } from '../src/persistency/Parser';
 import { PartReader } from '../src/persistency/PartReader';
 
-describe('test PartReader', () => {
+describe(PartReader.name, () => {
   const SAMPLE_PART_TEXT = `MyName
 MyInfo
 RuleName
