@@ -3,7 +3,7 @@ import { Header, VERSIONS } from '../src/model/Header';
 import { HeaderReader } from '../src/persistency/HeaderReader';
 import { Parser } from '../src/persistency/Parser';
 
-describe('test HeaderReader', () => {
+describe(HeaderReader.name, () => {
   const makeValidHeaderText = (version: string) => `${version}
 4
 02.06.2015
@@ -61,6 +61,7 @@ describe('test HeaderReader', () => {
       material: '',
       min: { x: 0, y: 0, z: 0 },
       max: { x: 180, y: 500, z: 0 },
+      subHeaderId: '',
       name: '',
       orderID: '',
       partsCount: 1,

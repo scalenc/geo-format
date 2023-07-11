@@ -23,13 +23,15 @@ export class HeaderReader {
 
     const header = { id, version, revision, date, min, max, area, unit, tolerance, is3D, partsCount } as Header;
 
-    let [section] = this.parser.readTokenLineWithOptionalId();
-    if (section === constants.SUBHEADER_SECTION) {
+    const [subSection, subHeaderId] = this.parser.readTokenLineWithOptionalId();
+    let sectionEnd = subSection;
+    if (subSection === constants.SUBHEADER_SECTION) {
+      header.subHeaderId = subHeaderId;
       this.readDetails(header);
       this.parser.readExpectedSectionEndLine(constants.SECTION_END);
-      section = this.parser.readTokenLine();
+      sectionEnd = this.parser.readTokenLine();
     }
-    this.parser.assertSectionEnd(constants.BLOCK_END, section);
+    this.parser.assertSectionEnd(constants.BLOCK_END, sectionEnd);
     return header;
   }
 

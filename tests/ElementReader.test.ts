@@ -11,7 +11,7 @@ import { TextAlignment, TextElement } from '../src/model/TextElement';
 import { ElementReader } from '../src/persistency/ElementReader';
 import { Parser } from '../src/persistency/Parser';
 
-describe('test ElementReader', () => {
+describe(ElementReader.name, () => {
   [{ text: 'UNKNOWN\n1 0\n2 1\n3\n1\n2\n3\n|~\n...', throws: /Unknown element type/ }].forEach((test) => {
     it(`should throw on read for ${JSON.stringify(test.text)}`, () => {
       const reader = new ElementReader(new Parser(test.text));

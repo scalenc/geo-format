@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { GeoReader } from '../src/persistency/GeoReader';
 
-describe('test GeoReader', () => {
+describe(GeoReader.name, () => {
   const sampleFiles = [
     '300T16.geo',
     '300T80X100.geo',
