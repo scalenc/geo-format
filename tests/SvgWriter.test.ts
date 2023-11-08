@@ -18,6 +18,7 @@ describe(SvgWriter.name, () => {
     '123456-A1-12345-123-12Stk.geo',
     'tmt-extract.geo',
     'tmt-extract-2.geo',
+    'tmt-extract-equal-names.geo',
   ];
 
   sampleFiles.forEach((filename) => {
@@ -75,7 +76,7 @@ describe(SvgWriter.name, () => {
     const file = GeoReader.read(geo);
     const svg = new SvgWriter().toSvg(file);
     expect(svg).equals(
-      '<svg viewBox="0 -848.528137424 724.264068712 848.528137424" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol><g id="part1"><path fill="white" stroke="black" d="M0 -424.264068712 A424.264068712 424.264068712 0 0 0 724.264068712 -124.264068712 A316.22776601683796 316.22776601683796 0 0 1 308.036302695 -424.264068712 A316.227766017 316.227766017 0 0 1 724.264068712 -724.264068712 A424.2640687119286 424.2640687119286 0 0 0 0 -424.264068712 Z" /></g></defs><g stroke="#000000" stroke-width="0.1%" fill="none"><use href="#part1" /></g></svg>'
+      '<svg viewBox="0 -848.528137424 724.264068712 848.528137424" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol><g id="part:1"><path fill="white" stroke="black" d="M0 -424.264068712 A424.264068712 424.264068712 0 0 0 724.264068712 -124.264068712 A316.22776601683796 316.22776601683796 0 0 1 308.036302695 -424.264068712 A316.227766017 316.227766017 0 0 1 724.264068712 -724.264068712 A424.2640687119286 424.2640687119286 0 0 0 0 -424.264068712 Z" /></g></defs><g stroke="#000000" stroke-width="0.1%" fill="none"><use href="#part:1" /></g></svg>'
     );
   });
 });
