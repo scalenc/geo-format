@@ -68,8 +68,9 @@ export class SvgWriter {
     const viewPort = `viewBox="${min.x - padding} ${-max.y - padding} ${svgWidth + padding * 2} ${svgHeight + padding * 2}"`;
     const dimensions = options ? ` width="${options.targetWidth}" height="${options.targetHeight}"` : '';
     const globalGroup = `<g stroke="#000000" stroke-width="${svgStrokeWidth}" fill="none">`;
-    const partDefs = file.parts.map((p, i) => this.writePartDef(p.name ? p : { ...p, name: `part${i + 1}` })).join('');
-    const partPos = file.parts.map((p, i) => this.writePartAndCopies(p.name ? p : { ...p, name: `part${i + 1}` })).join('');
+    const parts = file.parts.map((p, i) => ({ ...p, name: `${p.name || 'part'}:${i + 1}` }));
+    const partDefs = parts.map((p) => this.writePartDef(p)).join('');
+    const partPos = parts.map((p) => this.writePartAndCopies(p)).join('');
     return `<svg ${viewPort}${dimensions} xmlns="http://www.w3.org/2000/svg"><defs>${pointSymbol}${partDefs}</defs>${globalGroup}${partPos}</g></svg>`;
   }
 
