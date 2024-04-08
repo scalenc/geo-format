@@ -25,7 +25,6 @@
     "url": "https://github.com/scalenc/geo-format/issues"
   },
   "homepage": "https://github.com/scalenc/geo-format",
-  "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
@@ -71,5 +70,6 @@
   },
   "files": [
     "/dist"
-  ]
+  ],
+  "packageManager": "yarn@4.1.1"
 }
