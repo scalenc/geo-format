@@ -29,8 +29,7 @@ describe(ContourReader.name, () => {
       expect: SAMPLE_CONTOUR,
     },
     {
-      text:
-        'Info\n1 2 3\n0\n0.0 0.0 1.0\n0.0 0.0 0.0\n1.0 1.0 1.0\n0.5 0.5 0.5\n0.0\n-1\n##~~\n#~331\nLIN\n1 0\n1 2\n|~\nLIN\n1 0\n2 3\n|~\n##~~\n#~332\nLIN\n1 0\n4 5\n|~\nLIN\n1 0\n5 6\n|~\n##~~\n#~KONT_END\n...',
+      text: 'Info\n1 2 3\n0\n0.0 0.0 1.0\n0.0 0.0 0.0\n1.0 1.0 1.0\n0.5 0.5 0.5\n0.0\n-1\n##~~\n#~331\nLIN\n1 0\n1 2\n|~\nLIN\n1 0\n2 3\n|~\n##~~\n#~332\nLIN\n1 0\n4 5\n|~\nLIN\n1 0\n5 6\n|~\n##~~\n#~KONT_END\n...',
       expect: { ...SAMPLE_CONTOUR, segments: [{}, {}], offsetSegments: [{}, {}] },
     },
   ].forEach((test) => {
