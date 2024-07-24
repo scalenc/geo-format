@@ -31,6 +31,7 @@ publish-to-npm:
     - tags
   script:
     - |
+    - ./scripts/createAndPublishSBOM.sh
       echo "
       npmPublishRegistry: \"https://registry.npmjs.org/\"
       npmAlwaysAuth: true
