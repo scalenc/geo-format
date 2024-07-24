@@ -31,7 +31,6 @@ publish-to-npm:
     - tags
   script:
     - |
-    - ./scripts/createAndPublishSBOM.sh
       echo "
       npmPublishRegistry: \"https://registry.npmjs.org/\"
       npmAlwaysAuth: true
@@ -40,6 +39,7 @@ publish-to-npm:
     - 'sed -i "/^[ ]*\"prepare\": \".*\",$/d" package.json'
     - yarn
     - yarn npm publish --access public
+    - ./scripts/createAndPublishSBOM.sh
 
 publish-to-gitlab:
   stage: publish
