@@ -39,6 +39,7 @@ publish-to-npm:
     - 'sed -i "/^[ ]*\"prepare\": \".*\",$/d" package.json'
     - yarn
     - yarn npm publish --access public
+    - ./scripts/createAndPublishSBOM.sh
 
 publish-to-gitlab:
   stage: publish
