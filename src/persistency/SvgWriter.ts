@@ -67,6 +67,11 @@ export class SvgWriter {
     [ElementType.QUAD]: <FragmentWriter>this.writeQuadFragment.bind(this),
   };
 
+  constructor(options?: { inlineMirrorY?: boolean; colorPalette?: Array<string> }) {
+    if (options?.inlineMirrorY !== undefined) this.inlineMirrorY = options.inlineMirrorY;
+    if (options?.colorPalette) this.setColors(options.colorPalette);
+  }
+
   public get inlineMirrorY(): boolean {
     return this.ySign < 0;
   }

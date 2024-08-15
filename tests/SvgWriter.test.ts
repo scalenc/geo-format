@@ -44,8 +44,7 @@ describe(SvgWriter.name, () => {
     it(`should write expected svg without inlined mirrored Y for ${filename}`, () => {
       const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
       const file = GeoReader.read(content);
-      const svgWriter = new SvgWriter();
-      svgWriter.inlineMirrorY = false;
+      const svgWriter = new SvgWriter({ inlineMirrorY: false });
       const svg = svgWriter.toSvg(file);
 
       fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '.noInlineMirrorY.svg')), svg);
