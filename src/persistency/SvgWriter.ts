@@ -42,10 +42,11 @@ const POINT_SYMBOL_ID = 'point';
 const POINT_SYMBOL_DEF = '<symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol>';
 
 export class SvgWriter {
+  private ySign = -1;
   private readonly colorPallet = ['white', 'black', 'red', 'yellow', 'green', 'cyan', 'blue', 'magenta', 'plum', 'brown', 'lightgrey'];
 
   private elementWriters: { [key: string]: ElementWriter } = {
-    [ElementType.POINT]: <ElementWriter>SvgWriter.writePoint,
+    [ElementType.POINT]: <ElementWriter>this.writePoint.bind(this),
     [ElementType.LINE]: <ElementWriter>this.writeLine.bind(this),
     [ElementType.CIRCLE]: <ElementWriter>this.writeCircle.bind(this),
     [ElementType.ARC]: <ElementWriter>this.writeArc.bind(this),
@@ -66,6 +67,14 @@ export class SvgWriter {
     [ElementType.QUAD]: <FragmentWriter>this.writeQuadFragment.bind(this),
   };
 
+  public get inlineMirrorY(): boolean {
+    return this.ySign < 0;
+  }
+
+  public set inlineMirrorY(value: boolean) {
+    this.ySign = value ? -1 : 1;
+  }
+
   public toSvg(file: GeoFile, options?: GeoOptions): string {
     const { min, max } = file.header;
     const svgWidth = max.x - min.x;
@@ -81,12 +90,13 @@ export class SvgWriter {
     }
     const viewPort = `viewBox="${min.x - padding} ${-max.y - padding} ${svgWidth + padding * 2} ${svgHeight + padding * 2}"`;
     const dimensions = options?.targetWidth || options?.targetHeight ? ` width="${targetWidth}" height="${targetHeight}"` : '';
-    const globalGroup = `<g stroke="${this.colorPallet[ElementColor.WHITE]}" stroke-width="${svgStrokeWidth}" fill="none">`;
+    let globalAttributes = `stroke="${this.colorPallet[ElementColor.WHITE]}" stroke-width="${svgStrokeWidth}" fill="none"`;
+    if (!this.inlineMirrorY) globalAttributes += ' transform="scale(1, -1)"';
     const parts = file.parts.map((p, i) => ({ ...p, name: `${p.name || 'part'}:${i + 1}` }));
     const { symbolDefs, partDefs } = this.getDefs({ parts }, options);
     const defs = `<defs>${Object.values(symbolDefs).join('')}${Object.values(partDefs).join('')}</defs>`;
     const partPos = parts.map((p) => this.writePartAndCopies(p)).join('');
-    return `<svg ${viewPort}${dimensions} xmlns="http://www.w3.org/2000/svg">${defs}${globalGroup}${partPos}</g></svg>`;
+    return `<svg ${viewPort}${dimensions} xmlns="http://www.w3.org/2000/svg">${defs}<g ${globalAttributes}>${partPos}</g></svg>`;
   }
 
   public getDefs(file: Pick<GeoFile, 'parts'>, options?: GeoDefOptions): { symbolDefs: Record<string, string>; partDefs: Record<string, string> } {
@@ -172,9 +182,9 @@ export class SvgWriter {
     return this.writeElements(part, bending.bendingLines);
   }
 
-  private static writePoint(part: IPart, element: PointElement) {
+  private writePoint(part: IPart, element: PointElement) {
     const p = part.points[element.pointIndex];
-    return `<use id="#${POINT_SYMBOL_ID}" x="${p.x}" y="${-p.y}" />`;
+    return `<use id="#${POINT_SYMBOL_ID}" x="${p.x}" y="${this.ySign * p.y}" />`;
   }
 
   private writeLine(part: IPart, element: LineSegment) {
@@ -184,12 +194,12 @@ export class SvgWriter {
   private writeLineFragment(part: IPart, element: LineSegment, withStart = true) {
     const p1 = part.points[element.startPointIndex];
     const p2 = part.points[element.endPointIndex];
-    return withStart ? `M${p1.x} ${-p1.y} L${p2.x} ${-p2.y}` : `L${p2.x} ${-p2.y}`;
+    return withStart ? `M${p1.x} ${this.ySign * p1.y} L${p2.x} ${this.ySign * p2.y}` : `L${p2.x} ${this.ySign * p2.y}`;
   }
 
   private writeCircle(part: IPart, element: CircleElement) {
     const p = part.points[element.centerPointIndex];
-    return `<circle ${this.writeStroke(element)} cx="${p.x}" cy="${-p.y}" r="${element.radius}" />`;
+    return `<circle ${this.writeStroke(element)} cx="${p.x}" cy="${this.ySign * p.y}" r="${element.radius}" />`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -198,7 +208,7 @@ export class SvgWriter {
     const c = part.points[element.centerPointIndex];
     const p1 = { x: c.x + r, y: c.y };
     const p2 = { x: c.x - r, y: c.y };
-    return `M${p1.x} ${-p1.y} A${r} ${r} 0 1 0 ${p2.x} ${-p2.y} A${r} ${r} 0 1 0 ${p1.x} ${-p1.y}`;
+    return `M${p1.x} ${this.ySign * p1.y} A${r} ${r} 0 1 0 ${p2.x} ${this.ySign * p2.y} A${r} ${r} 0 1 0 ${p1.x} ${this.ySign * p1.y}`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -227,8 +237,10 @@ export class SvgWriter {
       spanAngle += 2 * Math.PI;
     }
     const large = spanAngle >= Math.PI ? 1 : 0;
-    const sweep = element.orientation < 0 ? 1 : 0;
-    return withStart ? `M${p1.x} ${-p1.y} A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${-p2.y}` : `A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${-p2.y}`;
+    const sweep = this.ySign * element.orientation > 0 ? 1 : 0;
+    return withStart
+      ? `M${p1.x} ${this.ySign * p1.y} A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${this.ySign * p2.y}`
+      : `A${r} ${r} 0 ${large} ${sweep} ${p2.x} ${this.ySign * p2.y}`;
   }
 
   private writeArrow(part: IPart, element: ArrowElement) {
@@ -242,9 +254,8 @@ export class SvgWriter {
     const p3 = { x: p2.x - dx * element.tipLength, y: p2.y - dy * element.tipLength };
     const p4 = { x: p3.x + dy * element.tipWidth, y: p3.y - dx * element.tipWidth };
     const p5 = { x: p3.x - dy * element.tipWidth, y: p3.y + dx * element.tipWidth };
-    return `<path ${this.writeStroke(element)} d="M${p1.x} ${-p1.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y} L${p2.x} ${-p2.y} L${p5.x} ${-p5.y} L${
-      p3.x
-    } ${-p3.y}" />`;
+    const stroke = this.writeStroke(element);
+    return `<path ${stroke} d="M${p1.x} ${this.ySign * p1.y} ${[p3, p4, p2, p5, p3].map((p) => `L${p.x} ${this.ySign * p.y}`).join(' ')}" />`;
   }
 
   private writeQuad(part: IPart, element: QuadElement) {
@@ -257,7 +268,7 @@ export class SvgWriter {
     const p2 = part.points[element.cornerPoint2Index];
     const p3 = part.points[element.cornerPoint3Index];
     const p4 = part.points[element.cornerPoint4Index];
-    return `M${p1.x} ${-p1.y} L${p2.x} ${-p2.y} L${p3.x} ${-p3.y} L${p4.x} ${-p4.y}`;
+    return `M${p1.x} ${this.ySign * p1.y} L${p2.x} ${this.ySign * p2.y} L${p3.x} ${this.ySign * p3.y} L${p4.x} ${this.ySign * p4.y}`;
   }
 
   private writeText(part: IPart, element: TextElement) {
@@ -273,7 +284,9 @@ export class SvgWriter {
     const charAngle = element.charAngle ? `rotate="${element.charAngle}""` : '';
     const font = `font-size="${size}" font-family="serif"${charAngle}`;
 
-    const transform = element.textAngle ? ` transform="rotate(${element.textAngle} ${p1.x} ${-p1.y})"` : '';
+    let transform = element.textAngle ? `rotate(${element.textAngle} ${p1.x} ${-p1.y})` : '';
+    if (!this.inlineMirrorY) transform = `scale(1, -1) ${transform}`;
+    if (transform) transform = ` transform="${transform}"`;
     const placement = `x="${p1.x}" y="${-p1.y}"${transform} text-anchor="${anchor}" dominant-baseline="${baseline}"`;
 
     return `<text ${placement} ${color} ${font}><![CDATA[${text}]]></text>`;
@@ -290,7 +303,9 @@ export class SvgWriter {
 
   private writeTransform(matrix: Matrix) {
     const m = matrix.values;
-    return `matrix(${m[0][0]}, ${m[1][0]}, ${m[0][1]}, ${m[1][1]}, ${m[3][0]}, ${-m[3][1]})`;
+    return this.ySign < 0
+      ? `matrix(${m[0][0]}, ${m[1][0]}, ${m[0][1]}, ${m[1][1]}, ${m[3][0]}, ${-m[3][1]})`
+      : `matrix(${m[0][0]}, ${m[0][1]}, ${m[1][0]}, ${m[1][1]}, ${m[3][0]}, ${m[3][1]})`;
   }
 
   private writeStroke(element: Element) {

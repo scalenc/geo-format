@@ -21,6 +21,10 @@ describe(SvgWriter.name, () => {
     'tmt-extract-equal-names.geo',
   ];
 
+  before(() => {
+    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
+  });
+
   sampleFiles.forEach((filename) => {
     it(`should write expected svg for ${filename}`, () => {
       const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
@@ -28,10 +32,25 @@ describe(SvgWriter.name, () => {
       const svgWriter = new SvgWriter();
       const svg = svgWriter.toSvg(file);
 
-      fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
       fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '.svg')), svg);
 
       const svgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '.svg'));
+      const expectedSvg = fs.readFileSync(svgFilename).toString('utf-8');
+      expect(expectedSvg).to.eq(svg);
+    });
+  });
+
+  sampleFiles.forEach((filename) => {
+    it(`should write expected svg without inlined mirrored Y for ${filename}`, () => {
+      const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
+      const file = GeoReader.read(content);
+      const svgWriter = new SvgWriter();
+      svgWriter.inlineMirrorY = false;
+      const svg = svgWriter.toSvg(file);
+
+      fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '.noInlineMirrorY.svg')), svg);
+
+      const svgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '.noInlineMirrorY.svg'));
       const expectedSvg = fs.readFileSync(svgFilename).toString('utf-8');
       expect(expectedSvg).to.eq(svg);
     });
@@ -44,7 +63,6 @@ describe(SvgWriter.name, () => {
     const svgWriter = new SvgWriter();
     svgWriter.setColors(['orange', 'blue']);
     const svg = svgWriter.toSvg(file);
-    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
     fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '-colored.svg')), svg);
 
     const coloredSvgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '-colored.svg'));
@@ -62,7 +80,6 @@ describe(SvgWriter.name, () => {
       targetHeight: 1000,
       targetStrokeWidth: 18,
     });
-    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
     fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '-padded.svg')), svg);
 
     const coloredSvgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '-padded.svg'));
