@@ -21,6 +21,10 @@ describe(SvgWriter.name, () => {
     'tmt-extract-equal-names.geo',
   ];
 
+  before(() => {
+    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
+  });
+
   sampleFiles.forEach((filename) => {
     it(`should write expected svg for ${filename}`, () => {
       const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
@@ -28,10 +32,24 @@ describe(SvgWriter.name, () => {
       const svgWriter = new SvgWriter();
       const svg = svgWriter.toSvg(file);
 
-      fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
       fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '.svg')), svg);
 
       const svgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '.svg'));
+      const expectedSvg = fs.readFileSync(svgFilename).toString('utf-8');
+      expect(expectedSvg).to.eq(svg);
+    });
+  });
+
+  sampleFiles.forEach((filename) => {
+    it(`should write expected svg without inlined mirrored Y for ${filename}`, () => {
+      const content = fs.readFileSync(path.join(__dirname, 'data', filename)).toString('latin1');
+      const file = GeoReader.read(content);
+      const svgWriter = new SvgWriter({ inlineMirrorY: false });
+      const svg = svgWriter.toSvg(file);
+
+      fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '.noInlineMirrorY.svg')), svg);
+
+      const svgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '.noInlineMirrorY.svg'));
       const expectedSvg = fs.readFileSync(svgFilename).toString('utf-8');
       expect(expectedSvg).to.eq(svg);
     });
@@ -44,7 +62,6 @@ describe(SvgWriter.name, () => {
     const svgWriter = new SvgWriter();
     svgWriter.setColors(['orange', 'blue']);
     const svg = svgWriter.toSvg(file);
-    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
     fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '-colored.svg')), svg);
 
     const coloredSvgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '-colored.svg'));
@@ -62,7 +79,6 @@ describe(SvgWriter.name, () => {
       targetHeight: 1000,
       targetStrokeWidth: 18,
     });
-    fs.mkdirSync(path.join(__dirname, 'dump'), { recursive: true });
     fs.writeFileSync(path.join(__dirname, 'dump', filename.replace(/\.geo$/i, '-padded.svg')), svg);
 
     const coloredSvgFilename = path.join(__dirname, 'data', 'svgs', filename.replace(/\.geo$/i, '-padded.svg'));
@@ -76,7 +92,7 @@ describe(SvgWriter.name, () => {
     const file = GeoReader.read(geo);
     const svg = new SvgWriter().toSvg(file);
     expect(svg).equals(
-      '<svg viewBox="0 -848.528137424 724.264068712 848.528137424" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol><g id="part:1"><path fill="white" stroke="black" d="M0 -424.264068712 A424.264068712 424.264068712 0 0 0 724.264068712 -124.264068712 A316.22776601683796 316.22776601683796 0 0 1 308.036302695 -424.264068712 A316.227766017 316.227766017 0 0 1 724.264068712 -724.264068712 A424.2640687119286 424.2640687119286 0 0 0 0 -424.264068712 Z" /></g></defs><g stroke="#000000" stroke-width="0.1%" fill="none"><use href="#part:1" /></g></svg>'
+      '<svg viewBox="0 -848.528137424 724.264068712 848.528137424" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="point" viewport="-2 -2 2 2"><path d="M-2 0 H2 M0 -2 V2 M-1.5 -1.5 L1.5 1.5 M-1.5 1.5 L1.5 -1.5" /></symbol><g id="part:1"><path fill="white" stroke="black" d="M0 -424.264068712 A424.264068712 424.264068712 0 0 0 724.264068712 -124.264068712 A316.22776601683796 316.22776601683796 0 0 1 308.036302695 -424.264068712 A316.227766017 316.227766017 0 0 1 724.264068712 -724.264068712 A424.2640687119286 424.2640687119286 0 0 0 0 -424.264068712 Z" /></g></defs><g stroke="black" stroke-width="0.1%" fill="none"><use href="#part:1" /></g></svg>'
     );
   });
 });
